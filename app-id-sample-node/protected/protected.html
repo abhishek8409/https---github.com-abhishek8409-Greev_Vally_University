@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Green Vally University</title>
+    <link rel="stylesheet" href="./stylesheets/index1.css">
+    <link rel='stylesheet' href='stylesheets/protected.css' />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="jquery.json-viewer.js"></script>
+    <link href="stylesheets/jquery.json-viewer.css" type="text/css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+    <div id="maindiv" role="main" class="maindiv">
+        <!-- its a final page -->
+
+        <div class="top-container">
+            <div class="top">
+                <div class="headerlogo1">
+                    <img src="./stylesheets/school_ol.jpg" alt="school logo" srcset="">
+                    <span id="header_School_Name1"> Green Vally University</span>
+                </div>
+                <!-- <div id="LocationC"><button onclick="getLocation()">Get Location</button>
+                <p id="demo"></p>
+            </div> -->
+
+                <div id="Slocation1">
+                    <p>📍 Location: Jamshedpur, Jharkhand</p>
+                </div>
+                <div class="cInfo1">
+                    <div>
+                        <p id="p1">Admission Helpline</p>
+                        <p id="p2">7371037371 </p>
+                    </div>
+                    <div>
+                        <p id="p1">24x7 Helpline</p>
+                        <p id="p2">7677922227 ,
+                            7283000220</p>
+                    </div>
+
+                </div>
+<!-- profilesection -->
+               <div id="userProfile" style="cursor:pointer;">
+    <span id="userNameSpan"></span>
+    <img id="userImg" style="display:none; width:40px; height:40px; border-radius:50%;">
+</div>
+
+                <div class="logout">
+
+                    <a aria-label="logout" href='/logout'>
+                        <img class="logout-icon" href='/logout' id="logoutIcon" src="images/logout.svg" alt="logout">
+                    </a>
+                    <br>logout
+                </div>
+            </div>
+
+            <!-- 2nd top -->
+            <div class="top2">
+                <a href="./adminlogin.html">
+    <button>Office Panel</button>
+</a>
+                <a href="">Notice</a>
+                <a href="">Fees Payment</a>
+                <a href="">Photo Gallery</a>
+                <a href="">Fesrs & Functions</a>
+                <a href="">Infrastructure</a>
+                <a href="">Contact Us</a>
+            </div>
+            <div class="top3">
+                <div class="menu">
+                    ABOUT
+                    <ul>The University <br>
+                        <li><span class="icon">›</span>The Vally Group</li><br>
+                        <li><span class="icon">›</span>Vally Overview/History</li><br>
+                        <li><span class="icon">›</span>Vision Mission & Core Values</li><br>
+                        <li><span class="icon">›</span>Awards & Achievements</li><br>
+                        <br><br>
+                        Welcome Note <br>
+                        <br>
+                        <li><span class="icon">›</span>Chancellor's Message</li><br>
+                        <li><span class="icon">›</span>Vice Chancellor's Message</li><br><br>
+                        Governance <br>
+                        <li><span class="icon">›</span>Governing Body</li><br>
+                        <li><span class="icon">›</span>Board of Management</li><br>
+                        <li><span class="icon">›</span>Academic Council</li><br>
+                        <li><span class="icon">›</span>Board of Studies</li><br>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                    SCHOOL & DEPARTMENT
+                    <ul>
+                        <li><span class="icon">›</span>School of Commerce And Management</li><br>
+                        <li><span class="icon">›</span>School of Law</li><br>
+                        <li><span class="icon">›</span>School of Nursing</li><br>
+                        <li><span class="icon">›</span>School of Engineering and IT</li><br>
+                        <li><span class="icon">›</span>School of Humanities</li><br>
+                        <li><span class="icon">›</span>School of Allied Health Science</li><br>
+                        <li><span class="icon">›</span>School of Pharmacy</li><br>
+                        <li><span class="icon">›</span>Research</li><br>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                    ACADEMICS
+                    <ul>
+                        <li><span class="icon">›</span>Academic Calender</li><br>
+                        <li><span class="icon">›</span>Teaching Methodology</li><br>
+                        <li><span class="icon">›</span>Facilities</li><br>
+                        <li><span class="icon">›</span>Events</li><br>
+                        <li><span class="icon">›</span>Examination</li><br>
+                        <li><span class="icon">›</span>Holiday List </li><br>
+                        <li><span class="icon">›</span>Convocation 2025</li><br>
+                        <li><span class="icon">›</span>Industry Interface</li><br>
+                        <li><span class="icon">›</span>Forms / Formates</li><br>
+                        <li><span class="icon">›</span>Scholarship 2025</li><br>
+                        <li><span class="icon">›</span>Library</li><br>
+                        <li><span class="icon">›</span>E-Learning</li><br>
+                        <li><span class="icon">›</span>Program Outcomes-Course Outcomes</li><br>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                    ADMISSIONS
+                    <ul>
+                        <li><span class="icon">›</span>Brochures</li><br>
+                        <li><span class="icon">›</span>Why Choose Green Vally </li><br>
+                        <li><span class="icon">›</span>How to Apply</li><br>
+                        <li><span class="icon">›</span>Eligibility Criteria</li><br>
+                        <li><span class="icon">›</span>Programs offered</li><br>
+                        <li><span class="icon">›</span>Program Fee </li><br>
+                        <li><span class="icon">›</span>Payment Procedure</li><br>
+                        <li><span class="icon">›</span>Payment Procedure </li><br>
+                        <li><span class="icon">›</span>Admission Notification</li><br>
+                        <li><span class="icon">›</span>Admission Calender </li><br>
+                        <li><span class="icon">›</span>Green Vally CET</li><br>
+                        <li><span class="icon">›</span>Scholarship</li><br>
+                        <li><span class="icon">›</span>Fee Refund Policy</li><br>
+                        <li><span class="icon">›</span>International Student</li><br>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                    CAMPUS LIFE
+                    <ul>
+                        <li><span class="icon">›</span>Photo Gallery</li><br>
+                        <li><span class="icon">›</span>Video Gallery</li><br>
+                        <li><span class="icon">›</span>VallyXpress</li><br>
+                        <li><span class="icon">›</span>Club & Center</li><br>
+                        <li><span class="icon">›</span>Fests & Functions</li><br>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                    PLACEMENT
+                    <ul>
+                        <li><span class="icon">›</span>Placement Brochure 2025-26</li><br>
+                        <li><span class="icon">›</span>Placement Notices</li><br>
+                        <li><span class="icon">›</span>Partial list of Recruiters</li><br>
+                        <li><span class="icon">›</span>Placement Staus</li><br>
+                        <li><span class="icon">›</span>Emplyer Feedback</li><br>
+                    </ul>
+                </div>
+
+                <div class="menu">
+                    CAREER
+                </div>
+
+                <div class="menu">
+                    ALUMNI PORTAL
+                </div>
+
+                <div class="menu">
+                    PROGRAMS
+                    <ul>
+                        <li><span class="icon">›</span>Undergraduate</li><br>
+                        <li><span class="icon">›</span>At Diploma Level</li><br>
+                        <li><span class="icon">›</span>At Postgraduate Level</li><br>
+                        <li><span class="icon">›</span>At Doctoral Level</li><br>
+                    </ul><br>
+
+                </div>
+                <a href="Addmission.html"><button id="admissionButton" class="menu"> ONLINE-ADMISSIONS </button></a>
+
+            </div>
+            <!-- ********* -->
+            <div id="totalstudent" >
+            <h4>Total Students:- <br><span id="count"></span></h4>
+            </div>
+
+
+            <!-- ** -->
+            <!-- Universityimg -->
+
+            <div class="imgsection">
+                <img src="./stylesheets/green_vally_bg.webp">
+            </div>
+
+            <!-- body -->
+            <div class="mainsection">
+
+                <h1> Unleash Your Potential </h1><br>
+
+                <h2>A Thriving Academic Experience at GREEN VALLY University</h2><br>
+
+                <p>At GREEN VALLY University , we believe in fostering a dynamic and enriching academic environment
+                    that equips our students for success. <br><br>
+
+                    Here’s what sets the learning experience apart at AJU: <br>
+                </p>
+
+                <h3>Engaging Teaching Methodology:
+                </h3><br>
+
+                <li>Our faculty members employ a blend of interactive lectures, discussions, case studies, and
+                    project-based learning to stimulate critical thinking and practical application of knowledge.
+                </li><br>
+                <li>We leverage technology through innovative tools and platforms to enhance students’ learning
+                    experience.
+                </li><br>
+                <h3>Unparalleled Facilities:</h3>
+
+                <li>State-of-the-art classrooms equipped with modern audio-visual technology provide an engaging
+                    learning environment.
+                </li><br>
+                <li>Specialized labs with cutting-edge equipment cater to students’ specific program needs, allowing
+                    them to gain hands-on experience.
+                </li><br>
+                <h3>Holistic Development:
+                </h3><br><br>
+
+                <li>AJU goes beyond academics. We host a variety of events throughout the year, including seminars,
+                    workshops, guest lectures, conferences, and other related programs.</li><br>
+                <li>Along with these, there are annul fests and events like Aarambh (Commencement and Orientation
+                    Function), Roo-b-roo (Fresher’s Day Function), Yuva (University Youth Fest), Technika (Annual
+                    Technical Fest), Holi Invasion (Annual Pre-holi Bash), Rukhsat (Farewell Function), Navotsav (Annul
+                    Gandhi-Shastri Jayanti-cum-Navratra Celebration), Roshni (Annual Celebration of Light), Aagaz
+                    (Annual Cultural Fest), Saraswati Pooja Celebration, Annual Christmas Carnival, Carvaan (Annual
+                    Excursion Tour), Jain Premier League (Inter-school T-20 Cricket Tournament) and many more.</li><br>
+                <li>These events broaden students’ perspective, develop their team-building and leadership traits, hone
+                    their communication skills, and nurture their creativity in more ways than one.</li><br>
+                <h3>Empowering Resources – Library & E-Learning:</h3><br><br>
+
+                <li>Our libraries offer comprehensive collection of books, journals, periodicals, and online databases,
+                    providing access to a wealth of knowledge at students’ fingertips.</li><br>
+                <li>We leverage a robust e-learning platform with interactive content, video lectures, and online
+                    assessments, allowing students to learn at their own pace and convenience.</li><br>
+                <h3>Industry Interface: A Stepping Stone to Success:</h3><br><br>
+
+                <li>We understand the importance of industry exposure. We bridge the gap between academia and the
+                    professional world through guest lectures by industry experts, industrial visits, internship
+                    opportunities, and placement assistance.</li><br>
+                At GREEN VALLY UNIVERSITY, we are committed to providing students with a well-rounded education that
+                equips them with the
+                skills, knowledge, and confidence to thrive in their chosen field. <br><br>
+
+                <h5>Welcome to GREEN VALLY University, where learning comes alive!</h5><br>
+
+                <div class="whygreenVally">
+                    <h2><span id="why">WHY</span> GREEN VALLY UNIVERSITY ?</h2>
+                    <div class="whygreenVally2">
+                        <div class="w1">
+                            <ul>
+                                <li><span class="icon">›</span>NAAC ‘A’ accredited in the First Cycle, the first and
+                                    only State Private University in Bihar, Jharkhand and West Bengal to achieve this
+                                    feat</li><br>
+                                <li><span class="icon">›</span>Part of the illustrious GREEN VALLY Group, Bengaluru.
+                                    Mentored
+                                    by GREEN VALLY (Deemed-to-be-University), Bengaluru (NAAC A++ and NIRF Top-100 HEI)
+                                </li><br>
+                                <li><span class="icon">›</span>Ranked 3rd in the “Top-15 Emerging Private Universities
+                                    in India” category in the prestigious Outlook iCare University Ranking 2023.</li>
+                                <br>
+                                <li><span class="icon">›</span>Active & Engaging Curriculum</li><br>
+                                <li><span class="icon">›</span>Interdisciplinary approach to programme learning</li><br>
+                                <li><span class="icon">›</span>60+ MoUs with inter/national academic and corporate
+                                    partners</li><br>
+
+                            </ul>
+                        </div>
+                        <div class="w2">
+                            <ul>
+                                <li><span class="icon">›</span>ISO-certified Standard EOMS 21001:2018 University</li>
+                                <br>
+                                <li><span class="icon">›</span>2000+ Job Offers, 500+ Recruiters till date. ₹23 LPA
+                                    Highest Package</li><br>
+                                <li><span class="icon">›</span>State-of-the-art infrastructure</li><br>
+                                <li><span class="icon">›</span>Encouragement to entrepreneurship and sports</li><br>
+                                <li><span class="icon">›</span>Public speaking platform through GREEN VALLY UNIVERSITY
+                                    Toastmasters Club
+                                </li><br>
+                                <li><span class="icon">›</span>Constant growth opportunities through dynamic clubs,
+                                    events</li><br>
+                                <li><span class="icon">›</span>Opportunity to improve communication-related aspect
+                                    through Cambridge Communicate App.</li><br>
+                                <li><span class="icon">›</span>Community Engagement through AJU Rotaract, NCC, NSS etc.
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="greenvally3">
+                 <h4> Ready to Take the Next Step?</h4><br><br>
+
+                    <li>Explore our programs in detail.</li><br>
+                    <li>Download our University brochure as well program-specific brochures.</li><br>
+                    <li>Check your eligibility criteria.</li><br>
+                    <li>Apply online/in-person.</li><br>
+                    <li>Secure your seat</li><br>
+                    <h3>We encourage you to visit our campus or admission office to experience the vibrant learning
+                        environment at GREEN VALLY University.</h3><br>
+
+                    <h4>To book your campus tour, call on 7371037371 (Monday to Saturday). Timing 10 AM to 2 PM</h4>
+                    <br><br>
+
+                    <h2>ADMISSION OFFICE:</h2><br><br>
+
+                    <h3>GREEN VALLY University</h3>
+                    <p>D-28, Danish Arcade,<br>
+                        Opp. Asian Inn Hotel,<br>
+                        Dhatkidih,<br>
+                        Jamshedpur – 831001 <br>
+                        Toll Free: 7371037371 / 0657-2220285 <br>
+                        admission@greenvallyuniversity.ac.inbr
+                    </p>
+
+                    <h3>UNIVERSITY CAMPUS:</h3>
+                    <p>Opp. Kerala Public School,<br>
+                        Vill.- Mohanpur,<br>
+                        Gamharia,<br>
+                        Dist. – Seraikela Kharsawan,<br>
+                        Jharkhand-832108 <br>
+                        +91 8235078002, +91 7283000220 <br>
+                        info@greenvallyuniversity.ac.in <br>
+                    </p>
+                    </div>
+            </div>
+
+            <div class="footer">
+                <h4>Copyright © 2025. All Rights Reserved By GREEN VALLY University.</h4>
+            </div>
+
+
+            <script>
+
+
+$.getJSON('/protected/api/idPayload', function (id_token) {
+
+    let name = localStorage.getItem("name") || id_token.name;
+    let img = localStorage.getItem("profileImage");
+
+    let span = document.getElementById("userNameSpan");
+    let image = document.getElementById("userImg");
+
+    if(img){
+        image.src = img;
+        image.style.display = "block";
+        span.style.display = "none";
+    } else {
+        span.innerText = name.charAt(0).toUpperCase();
+        span.style.display = "flex";
+        image.style.display = "none";
+    }
+});
+
+
+//                 $.getJSON('/protected/api/idPayload', function (id_token) {
+//     let name = id_token.name;
+
+//     if(name && name.length > 0){
+//         $('#userNameSpan').html(name.charAt(0).toUpperCase()); // ✅ only first letter
+//     } else {
+//         $('#userNameSpan').html('?');
+//     }
+// });
+
+
+// *****
+
+fetch("/api/students/count")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("count").innerText = data.total;
+})
+.catch(err => console.log(err));
+// ****
+
+            </script>
+<script src="./stylesheets/protected1.js"></script>
+</body>
+
+</html>

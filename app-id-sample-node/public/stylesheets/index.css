@@ -1,0 +1,235 @@
+
+html, body {
+    height: 100%;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.main-container {
+
+    flex: 1 1 100%;
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    height: 100%;
+     background-image: url('./green_vally_bg.webp');
+     
+  background-size: cover;     
+  background-repeat: no-repeat;
+  background-position: center;
+
+}
+.header{
+    background: rgb(240, 243, 240);
+    height: 60px;
+    width: 100%;
+    position: absolute;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+
+}
+.headerlogo img{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#header_School_Name {
+    font-size: 20px;
+  background: linear-gradient(270deg, red, blue, green);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: move 5s ease infinite;
+  cursor: pointer;
+}
+
+.cInfo{
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+   justify-content: center;
+}
+.cInfo div{
+    border-right: 2px solid rgb(1, 2, 46);
+   padding:0px 10px 0px 10px;
+   cursor: pointer;
+}
+#p1{
+    color: rgba(65, 4, 4, 0.842);
+    text-align: center;
+    font-weight: bold;
+}
+#p2{
+    color: #011c07;
+    text-align: center;
+    font-weight: bold;
+}
+#buttonheader{
+    padding: 10px 30px 10px 0px;
+    
+}
+#buttonheader button{
+    width: 70px;
+    height: 40px;
+     background-color: #4178BE;
+     color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+#buttonheader button:hover{
+    background-color: #011c07;
+    border: 2px dotted goldenrod;
+}
+#Slocation{
+    cursor: pointer;
+}
+
+/* #locationC{
+    height: 100%;
+    width: 150px;
+    color: rgb(0, 0, 0);
+} */
+
+
+
+@keyframes move {
+  0% { background-position: 0% }
+  50% { background-position: 100% }
+  100% { background-position: 0% }
+}
+
+.bottom-container {
+    margin-top: 145px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-top {
+    flex: 1;
+    text-align: center;
+    margin-top: 2.5%;
+}
+
+.flex-bottom {
+    text-align: center;
+    font-family: IBMPlexSans-Medium;
+    font-size: 16px;
+    
+    color: #42535C;
+    letter-spacing: 0;
+    line-height: 20px;
+    font-weight: normal;
+    flex: none;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+.flex-bottom img{
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+    
+}
+
+.text-div {
+    font-family: IBMPlexSans-Light;
+    font-size: 20px;
+    color:#032436;
+    letter-spacing: 0;
+    text-align: center;
+    line-height: 24px;
+    flex: 1;
+    margin-bottom: 59px;
+}
+
+.button {
+    font-family: IBMPlexSans-Medium;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-align: center;
+    background-color: #4178BE;
+    border: none;
+    padding: 10px 40px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 158px;
+    height: 40px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+}
+.button:hover{
+    background-color: #011c07;
+    border: 2px dotted goldenrod;
+   
+}
+
+.logo-icon {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70px;
+    height: 70px;
+    margin-bottom: 41px;
+    margin-top: 81px;
+    border-radius: 50%;
+}
+.loginsection{
+    margin-top: 50px;
+    height: 500px;
+    width: 370px;
+    background: rgba(255, 255, 255, 0.6); 
+  backdrop-filter: blur(8px);        
+  border-radius: 15px;
+  border: 1px solid rgba(255,255,255,0.2);
+   box-shadow: 0 8px 32px rgba(0,0,0,1);
+}
+.typing {
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid black;
+  animation: typing 3s steps(20) forwards infinite;
+}
+
+@keyframes typing {
+  to {
+    width: 100%;
+  }
+}
+h3{
+    padding-left: 10px;
+    color: #011c07;
+}
+#headline{
+    font-size: 20px;
+  background: linear-gradient(270deg, red, blue, green);
+  background-size: 600% 600%;
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: move 5s ease infinite;
+}
+
+@keyframes move {
+  0% { background-position: 0% }
+  50% { background-position: 100% }
+  100% { background-position: 0% }
+}

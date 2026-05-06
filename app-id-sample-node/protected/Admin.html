@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>GREEN VALLY UNIVERSITY</h2>
+
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Students</li>
+            <li>FeesCollection</li>
+            <li>Hostels</li>
+            <li>Classes</li>
+            <li>Sessions</li>
+            <li>Notices</li>
+            <li>Attendance</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <div class="topbar">
+            <h2>GREEN VALLY UNIVERSITY ADMIN DASHBOARD</h2>
+            <div class="admin">admin</div>
+        </div>
+
+        <div class="welcome">
+            Welcome to your Admin Dashboard!!
+        </div>
+
+        <!-- Cards -->
+        <div class="cards">
+
+            <div class="card">
+                <h3>Students</h3>
+                <p id="studentCount">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Fees Collection</h3>
+                <p>1</p>
+            </div>
+
+            <div class="card">
+                <h3>Banks</h3>
+                <p>2</p>
+            </div>
+
+            <div class="card">
+                <h3>Teachers</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>Subjects</h3>
+                <p>1</p>
+            </div>
+
+            <div class="card">
+                <h3>Classes</h3>
+                <p>2</p>
+            </div>
+
+            <div class="card">
+                <h3>Streams</h3>
+                <p>2</p>
+            </div>
+
+            <div class="card">
+                <h3>Hostels</h3>
+                <p>1</p>
+            </div>
+
+            <div class="card">
+                <h3>Timetables</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>Events</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>Notices</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>Exam Results</h3>
+                <p>0</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+/* 🔥 Cloudant student count API */
+fetch("/api/students/count")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("studentCount").innerText = data.total;
+});
+</script>
+
+</body>
+</html>

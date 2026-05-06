@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+<div class="profileCard">
+<h2>My Profile</h2>
+
+<img id="preview" width="100" height="100"><br><br>
+<input type="file" id="upload"><br><br>
+
+<!-- VIEW MODE -->
+<div id="viewMode">
+    <p><b>Name:</b> <span id="showName"></span></p>
+    <p><b>Reg No:</b> <span id="showReg"></span></p>
+    <p><b>Email:</b> <span id="showEmail"></span></p>
+    <p><b>Phone:</b> <span id="showPhone"></span></p>
+
+    <button onclick="editProfile()">Edit</button>
+</div>
+
+<!-- EDIT MODE -->
+<div id="editMode" style="display:none;">
+    <label>Name:</label>
+    <input type="text" id="name"><br><br>
+
+    <label>Registration no:</label>
+    <input type="text" id="regNo"><br><br>
+
+    <label>Email:</label>
+    <input type="email" id="email"><br><br>
+
+    <label>Phone:</label>
+    <input type="text" id="phone"><br><br>
+
+    <button onclick="saveData()">Update</button>
+</div>
+
+<a href="../protected.html">⬅ Back</a>
+</div>
+
+<script src="profile.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+
+.header1{
+    background: rgb(245, 122, 7);
+    height: 60px;
+    width: 100%;
+    /* position: absolute; */
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+
+}
+.headerlogo1 img{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#header_School_Name1 {
+    font-size: 20px;
+  background: linear-gradient(270deg, red, blue, green);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: move 5s ease infinite;
+  cursor: pointer;
+}
+
+.cInfo1{
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+   justify-content: center;
+}
+.cInfo1 div{
+    border-right: 2px solid rgb(1, 2, 46);
+   padding:0px 10px 0px 10px;
+   cursor: pointer;
+}
+#buttonheader1{
+    padding: 10px 30px 10px 0px;
+    
+}
+#buttonheader1 button{
+    width: 70px;
+    height: 40px;
+    background: yellow;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+#Slocation1{
+    cursor: pointer;
+}
+
+/* #locationC{
+    height: 100%;
+    width: 150px;
+    color: rgb(0, 0, 0);
+} */
+
+
+
+@keyframes move {
+  0% { background-position: 0% }
+  50% { background-position: 100% }
+  100% { background-position: 0% }
+}
+
+
+.button {
+    font-family: IBMPlexSans-Medium;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-align: center;
+    background-color: #4178BE;
+    border: none;
+    padding: 10px 40px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 158px;
+    height: 40px;
+    margin-bottom: 4px;
+}
+

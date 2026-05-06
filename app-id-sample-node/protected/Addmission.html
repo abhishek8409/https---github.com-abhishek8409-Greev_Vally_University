@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Form</title>
+
+  <link rel="stylesheet" href="addmission.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Registration Form</h2>
+
+    <form id="regForm">
+        <label>Full Name</label>
+        <input type="text" placeholder="Enter your name" required>
+
+        <label for="adhar">Adhar card no</label>
+        <input type="text" id="adhar" maxlength="12" required>
+        <button onclick="checkAadhar()">Submit</button><br><br>
+
+        <label>Email</label>
+        <input type="email" placeholder="Enter your email" required>
+
+        <label>Phone Number</label>
+        <input type="tel" placeholder="Enter your phone number" required>
+
+        <label>Date of Birth</label>
+        <input type="date" required>
+
+        <label>Gender</label>
+        <div class="gender">
+            <label><input type="radio" name="gender"> Male</label>
+            <label><input type="radio" name="gender"> Female</label>
+            <label><input type="radio" name="gender"> Other</label>
+        </div>
+
+        <label>Course</label>
+        <select required>
+            <option value="">Select Course</option>
+            <option>BCA</option>
+            <option>BBA</option>
+            <option>B.Tech</option>
+            <option>MCA</option>
+            <option>M.A</option>
+            <option>B.A</option>
+            <option>diploma</option>
+            <option>ITI</option>
+            <option>Law</option>
+            <option>B.Pharma</option>
+            <option>D.Pharma</option>
+            <option>Nursing</option>
+            <option>B.com</option>
+            <option>M.com</option>
+        </select>
+
+        <label for="father">Father's Name</label>
+        <input type="text" placeholder="Father's Name" required>
+
+        <label for="mother">Mother's Name</label>
+        <input type="text" placeholder="Mother's name" required>
+
+        <label for="parent phone no">Parent phone num</label>
+        <input type="num" maxlength="10" minlength="10" placeholder="Parent phone number" required>
+
+
+        <label>Address</label>
+        <textarea rows="3" placeholder="Enter your address" required></textarea>
+
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+
+<script>
+function checkAadhar() {
+    let aadhar = document.getElementById("adhar").value;
+
+    if (aadhar.length !== 12 || isNaN(aadhar)) {
+        alert("Enter valid 12-digit Aadhar number");
+    } else {
+        alert("Valid Aadhar Number");
+    }
+}
+
+
+// *****
+
+
+document.getElementById("regForm").addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const data = {
+        name: document.querySelector("input[type='text']").value,
+        aadhar: document.getElementById("adhar").value,
+        email: document.querySelector("input[type='email']").value,
+        phone: document.querySelector("input[type='tel']").value,
+        course: document.querySelector("select").value
+    };
+
+    let res = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    let result = await res.json();
+
+    alert("Registered! Your ID: " + result.studentId);
+
+});
+
+</script>
+</body>
+</html>
