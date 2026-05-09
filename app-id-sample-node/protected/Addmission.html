@@ -1,118 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Registration Form</title>
 
-  <link rel="stylesheet" href="addmission.css">
+    <link rel="stylesheet" href="addmission.css">
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Registration Form</h2>
+    <div class="container">
+        <h2>Registration Form</h2>
 
-    <form id="regForm">
-        <label>Full Name</label>
-        <input type="text" placeholder="Enter your name" required>
+        <form id="regForm">
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter your name" required>
 
-        <label for="adhar">Adhar card no</label>
-        <input type="text" id="adhar" maxlength="12" required>
-        <button onclick="checkAadhar()">Submit</button><br><br>
+            <label for="adhar">Adhar card no</label>
+            <input type="text" id="adhar" maxlength="12" required>
+            <button type="button" onclick="checkAadhar()">Check Aadhaar</button><br><br>
 
-        <label>Email</label>
-        <input type="email" placeholder="Enter your email" required>
+            <label>Email</label>
+            <input type="email" placeholder="Enter your email" required>
 
-        <label>Phone Number</label>
-        <input type="tel" placeholder="Enter your phone number" required>
+            <label>Phone Number</label>
 
-        <label>Date of Birth</label>
-        <input type="date" required>
+            <div class="phone-box">
 
-        <label>Gender</label>
-        <div class="gender">
-            <label><input type="radio" name="gender"> Male</label>
-            <label><input type="radio" name="gender"> Female</label>
-            <label><input type="radio" name="gender"> Other</label>
-        </div>
+                <select id="countryCode">
 
-        <label>Course</label>
-        <select required>
-            <option value="">Select Course</option>
-            <option>BCA</option>
-            <option>BBA</option>
-            <option>B.Tech</option>
-            <option>MCA</option>
-            <option>M.A</option>
-            <option>B.A</option>
-            <option>diploma</option>
-            <option>ITI</option>
-            <option>Law</option>
-            <option>B.Pharma</option>
-            <option>D.Pharma</option>
-            <option>Nursing</option>
-            <option>B.com</option>
-            <option>M.com</option>
-        </select>
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+61">🇦🇺 +61</option>
 
-        <label for="father">Father's Name</label>
-        <input type="text" placeholder="Father's Name" required>
+                </select>
 
-        <label for="mother">Mother's Name</label>
-        <input type="text" placeholder="Mother's name" required>
+                <input type="tel" id="phone" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit phone number"
+                    required>
 
-        <label for="parent phone no">Parent phone num</label>
-        <input type="num" maxlength="10" minlength="10" placeholder="Parent phone number" required>
+            </div>
+
+            <label>Date of Birth</label>
+            <input type="date" required>
+
+            <label>Gender</label>
+            <div class="gender">
+                <label><input type="radio" name="gender"> Male</label>
+                <label><input type="radio" name="gender"> Female</label>
+                <label><input type="radio" name="gender"> Other</label>
+            </div>
+
+            <label>Course</label>
+            <select required>
+                <option value="">Select Course</option>
+                <option>BCA</option>
+                <option>BBA</option>
+                <option>B.Tech</option>
+                <option>MCA</option>
+                <option>M.A</option>
+                <option>B.A</option>
+                <option>diploma</option>
+                <option>ITI</option>
+                <option>Law</option>
+                <option>B.Pharma</option>
+                <option>D.Pharma</option>
+                <option>Nursing</option>
+                <option>B.com</option>
+                <option>M.com</option>
+            </select>
+
+            <label for="father">Father's Name</label>
+            <input type="text" placeholder="Father's Name" required>
+
+            <label for="mother">Mother's Name</label>
+            <input type="text" placeholder="Mother's name" required>
+
+            <label>Parent Phone Number</label>
+
+            <div class="phone-box">
+
+                <select id="parentCountryCode">
+
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+61">🇦🇺 +61</option>
+
+                </select>
+
+                <input type="tel" id="parentPhone" maxlength="10" pattern="[0-9]{10}"
+                    placeholder="10-digit parent number" required>
+
+            </div>
 
 
-        <label>Address</label>
-        <textarea rows="3" placeholder="Enter your address" required></textarea>
+            <label>Address</label>
+            <textarea rows="3" placeholder="Enter your address" required></textarea>
 
-        <button type="submit">Register</button>
-    </form>
-</div>
-
-
-<script>
-function checkAadhar() {
-    let aadhar = document.getElementById("adhar").value;
-
-    if (aadhar.length !== 12 || isNaN(aadhar)) {
-        alert("Enter valid 12-digit Aadhar number");
-    } else {
-        alert("Valid Aadhar Number");
-    }
-}
+            <button type="submit">Register</button>
+        </form>
+    </div>
 
 
-// *****
+    <script>
+        function checkAadhar() {
+            let aadhar = document.getElementById("adhar").value;
+
+            if (aadhar.length !== 12 || isNaN(aadhar)) {
+                alert("Enter valid 12-digit Aadhar number");
+            } else {
+                alert("Valid Aadhar Number");
+            }
+        }
 
 
-document.getElementById("regForm").addEventListener("submit", async function(e) {
+        // *****
 
-    e.preventDefault();
 
-    const data = {
-        name: document.querySelector("input[type='text']").value,
-        aadhar: document.getElementById("adhar").value,
-        email: document.querySelector("input[type='email']").value,
-        phone: document.querySelector("input[type='tel']").value,
-        course: document.querySelector("select").value
-    };
+        //regform
 
-    let res = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
+        document.getElementById("regForm").addEventListener("submit", async function (e) {
 
-    let result = await res.json();
+            e.preventDefault();
 
-    alert("Registered! Your ID: " + result.studentId);
+            if (document.getElementById("phone").value.length !== 10) {
 
-});
+                alert("Phone number must be 10 digits");
 
-</script>
+                return;
+
+            }
+
+            if (document.getElementById("parentPhone").value.length !== 10) {
+
+                alert("Parent phone number must be 10 digits");
+
+                return;
+
+            }
+
+            const data = {
+
+                name: document.querySelectorAll("input")[0].value,
+                aadhar: document.getElementById("adhar").value,
+                email: document.querySelector("input[type='email']").value,
+                phone:
+                    document.getElementById("countryCode").value +
+                    document.getElementById("phone").value,
+                dob: document.querySelector("input[type='date']").value,
+
+                gender: document.querySelector("input[name='gender']:checked")?.parentElement.innerText || "",
+
+                course: document.querySelector("select").value,
+
+                fatherName: document.querySelectorAll("input[type='text']")[1].value,
+
+                motherName: document.querySelectorAll("input[type='text']")[2].value,
+
+                parentPhone:
+                    document.getElementById("parentCountryCode").value +
+                    document.getElementById("parentPhone").value,
+
+                address: document.querySelector("textarea").value
+            };
+
+            let res = await fetch("/api/register", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(data)
+            });
+
+            let result = await res.json();
+
+            alert(result.message);
+
+        });
+
+    </script>
 </body>
+
 </html>

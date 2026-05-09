@@ -87,3 +87,20 @@ body {
     font-size: 22px;
     font-weight: bold;
 }
+a{
+    text-decoration: none;
+    color: black;
+}
+li a{
+    text-decoration: none;
+    color: white;
+}
+#addmission{
+    height: 40px;
+    width: 110px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: green;
+    color: white;
+    font-size: larger;
+}

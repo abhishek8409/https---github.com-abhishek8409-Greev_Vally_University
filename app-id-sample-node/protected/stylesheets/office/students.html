@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Students Details</title>
+</head>
+
+<body>
+
+<h2>All Students Full Details</h2><br><br>
+<hr>
+
+<input type="text" id="search" placeholder="Search student..." onkeyup="searchStudent()"><br><br><hr>
+
+
+<table border="1" width="100%">
+    <thead>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Course</th>
+    <th>Father</th>
+    <th>Mother</th>
+    <th>Parent Phone</th>
+    <th>DOB</th>
+    <th>Gender</th>
+    <th>Address</th>
+    <th>Aadhar</th>
+</tr>
+</thead>
+
+    <tbody id="studentTable"></tbody>
+</table>
+
+<script>
+fetch("/api/students")
+.then(res => res.json())
+.then(data => {
+
+    let rows = "";
+
+    data.forEach(student => {
+
+    rows += `
+
+    <tr>
+
+        <td>${student.studentId || ''}</td>
+
+        <td>${student.name || ''}</td>
+
+        <td>${student.email || ''}</td>
+
+        <td>${student.phone || ''}</td>
+
+        <td>${student.course || ''}</td>
+
+        <td>${student.fatherName || ''}</td>
+
+        <td>${student.motherName || ''}</td>
+
+        <td>${student.parentPhone || ''}</td>
+
+        <td>${student.dob || ''}</td>
+
+        <td>${student.gender || ''}</td>
+
+        <td>${student.address || ''}</td>
+
+        <td>${student.aadhar || ''}</td>
+
+    </tr>
+
+    `;
+});
+
+    document.getElementById("studentTable").innerHTML = rows;
+});
+
+
+</script>
+<script src="./students.js"></script>
+
+</body>
+</html>

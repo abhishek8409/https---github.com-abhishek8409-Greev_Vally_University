@@ -15,35 +15,68 @@
         <input type="email" id="email" placeholder="Enter Email" required>
         <input type="password" id="password" placeholder="Enter Password" required>
 
-        <button type="submit"><a href="./Admin.html">login</a></button>
+        <button type="submit">Login</button>
     </form>
 
     <p id="error" style="color:red;"></p>
 </div>
 
 <script>
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+    
+
+document.getElementById("loginForm")
+.addEventListener("submit", async function(e){
+
     e.preventDefault();
 
     const data = {
+
         email: document.getElementById("email").value,
+
         password: document.getElementById("password").value
+
     };
 
-    let res = await fetch("/admin/login", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify(data)
-    });
+    try{
 
-    let result = await res.json();
+        let res = await fetch("/admin/login", {
 
-    if(result.success){
-        window.location.href = "/protected/admin.html";
-    } else {
-        document.getElementById("error").innerText = "Invalid Login";
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":"application/json"
+
+            },
+
+            body: JSON.stringify(data)
+
+        });
+
+        let result = await res.json();
+
+        if(result.success){
+
+            window.location.href = "/protected/admin.html";
+
+        } else {
+
+            document.getElementById("error")
+            .innerText = "Invalid Email or Password";
+
+        }
+
+    } catch(err){
+
+        console.log(err);
+
+        document.getElementById("error")
+        .innerText = "Server Error";
+
     }
+
 });
+
 </script>
 
 </body>

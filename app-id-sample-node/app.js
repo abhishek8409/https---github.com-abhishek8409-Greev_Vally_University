@@ -1,261 +1,595 @@
+// ===============================================
+// GREEN VALLY UNIVERSITY - FINAL app.js
+// ===============================================
 
+// ================= IMPORTS =====================
 
-
-
-// ✅ UPDATED: Load config first
 const config = require('./localdev-config.json');
 
-// ✅ UPDATED: Cloudant imports
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
+
 const { IamAuthenticator } = require('ibm-cloud-sdk-core');
 
 const express = require("express");
+
 const session = require("express-session");
+
 const passport = require("passport");
+
 const appID = require("ibmcloud-appid");
 
+// ================= APP SETUP ===================
+
 const WebAppStrategy = appID.WebAppStrategy;
+
 const app = express();
 
 const CALLBACK_URL = "/ibm/cloud/appid/callback";
+
 const port = process.env.PORT || 3000;
 
-//
-// ✅ UPDATED: Cloudant configuration (using JSON config)
-//
+// ================= CLOUDANT ====================
+
 const cloudant = CloudantV1.newInstance({
-  authenticator: new IamAuthenticator({
-    apikey: config.CLOUDANT_APIKEY,
-  }),
+
+    authenticator: new IamAuthenticator({
+
+        apikey: config.CLOUDANT_APIKEY,
+
+    }),
+
 });
 
 cloudant.setServiceUrl(config.CLOUDANT_URL);
 
 const dbName = "users";
 
+// ================= DATABASE CREATE ====================
+
 async function createDatabase() {
-  try {
-    await cloudant.putDatabase({ db: dbName });
-    console.log("Database created");
-  } catch (err) {
-    if (err.code === 412) {
-      console.log("Database already exists");
-    } else {
-      console.error(err);
+
+    try {
+
+        await cloudant.putDatabase({
+
+            db: dbName
+
+        });
+
+        console.log("✅ Database Created");
+
+    } catch (err) {
+
+        if (err.code === 412) {
+
+            console.log("✅ Database Already Exists");
+
+        } else {
+
+            console.log(err);
+
+        }
+
     }
-  }
+
 }
+
 createDatabase();
 
-//
-// EXPRESS + APP ID SETUP
-//
-app.use(session({
-  secret: "123456",
-  resave: true,
-  saveUninitialized: true,
-  proxy: true
-}));
+// ================= INDEX CREATE ====================
 
-app.use(passport.initialize());
-app.use(passport.session());
+async function createIndex() {
 
-let webAppStrategy = new WebAppStrategy(getAppIDConfig());
-passport.use(webAppStrategy);
+    try {
 
-passport.serializeUser((user, cb) => cb(null, user));
-passport.deserializeUser((obj, cb) => cb(null, obj));
+        await cloudant.postIndex({
 
-app.get(CALLBACK_URL,
-  passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
-    failureRedirect: '/error',
-    session: false
-  })
-);
+            db: dbName,
 
-// ✅ Protect all /protected routes
-app.use("/protected",
-  passport.authenticate(WebAppStrategy.STRATEGY_NAME, { session: false })
-);
+            index: {
 
-app.use(express.static("public"));
-app.use('/protected', express.static("protected"));
+                fields: ["type", "aadhar"]
 
-app.get("/logout", (req, res) => {
-  req._sessionManager = false;
-  WebAppStrategy.logout(req);
-  res.clearCookie("refreshToken");
-  res.redirect("/");
-});
+            },
 
-//
-// ✅ UPDATED: STORE USER HERE (CORRECT PLACE)
-//
-app.get("/protected/api/idPayload", async (req, res) => {
+            name: "student-index",
 
-  const user = req.session[WebAppStrategy.AUTH_CONTEXT].identityTokenPayload;
+            type: "json"
 
-  const userData = {
-    _id: user.sub,
-    name: user.name,
-    email: user.email,
-    timestamp: new Date()
-  };
+        });
 
-  try {
-    await cloudant.postDocument({
-      db: dbName,
-      document: userData,
-    });
-    console.log("User stored in Cloudant");
-  } catch (err) {
-    console.error("Error storing user:", err);
-  }
+        console.log("✅ Index Created");
 
-  res.send(user);
-});
+    } catch (err) {
 
-app.get('/error', (req, res) => {
-  res.send('Authentication Error');
-});
+        console.log(err);
 
-app.listen(port, () => {
-  console.log("Listening on http://localhost:" + port);
-});
-
-//
-// CONFIG FUNCTION
-//
-function getAppIDConfig() {
-  let cfg;
-
-  try {
-    cfg = require('./localdev-config.json');
-  } catch (e) {
-    if (process.env.APPID_SERVICE_BINDING) {
-      cfg = JSON.parse(process.env.APPID_SERVICE_BINDING);
-      cfg.redirectUri = process.env.redirectUri;
-    } else {
-      let vcapApplication = JSON.parse(process.env["VCAP_APPLICATION"]);
-      return {
-        "redirectUri":
-          "https://" + vcapApplication["application_uris"][0] + CALLBACK_URL
-      };
     }
-  }
-  return cfg;
+
 }
 
-// add new  
-// *********************************************
+createIndex();
 
-app.use(express.json()); // IMPORTANT
-
-// 👉 Register Student API
-app.post("/api/register", async (req, res) => {
-
-  const data = req.body;
-
-  try {
-
-    // 👉 count existing students
-    const result = await cloudant.postFind({
-      db: dbName,
-      selector: { type: "student" }
-    });
-
-    let count = result.result.docs.length;
-
-    let newStudent = {
-      _id: "student_" + (count + 1), // 👉 unique ID
-      type: "student",
-      studentId: count + 1,
-      ...data,
-      createdAt: new Date()
-    };
-
-    await cloudant.postDocument({
-      db: dbName,
-      document: newStudent
-    });
-
-    res.json({
-      message: "Student Registered",
-      studentId: newStudent.studentId
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error");
-  }
-
-});
-
-
-
-// *******count student
-
-app.get("/api/students/count", async (req, res) => {
-  try {
-    const result = await cloudant.postFind({
-      db: dbName,
-      selector: { type: "student" }
-    });
-
-    res.json({
-      total: result.result.docs.length
-    });
-
-  } catch (err) {
-    res.status(500).send("Error");
-  }
-});
-
-
-
-app.use("/protected",
-  passport.authenticate(WebAppStrategy.STRATEGY_NAME, { session: false })
-);
-
-// ******
-
-// admin login page
+// ================= EXPRESS ====================
 
 app.use(express.json());
 
-// 👉 Hardcoded Admin (simple version)
+app.use(express.urlencoded({
+
+    extended: true
+
+}));
+
+// ================= SESSION ====================
+
+app.use(session({
+
+    secret: "greenvallysecret",
+
+    resave: false,
+
+    saveUninitialized: false,
+
+    proxy: true
+
+}));
+
+// ================= PASSPORT ====================
+
+app.use(passport.initialize());
+
+app.use(passport.session());
+
+let webAppStrategy = new WebAppStrategy(getAppIDConfig());
+
+passport.use(webAppStrategy);
+
+passport.serializeUser((user, cb) => cb(null, user));
+
+passport.deserializeUser((obj, cb) => cb(null, obj));
+
+// ================= APP ID CALLBACK ====================
+
+app.get(
+
+    CALLBACK_URL,
+
+    passport.authenticate(
+
+        WebAppStrategy.STRATEGY_NAME,
+
+        {
+
+            failureRedirect: "/error",
+
+            session: false
+
+        }
+
+    )
+
+);
+
+// ================= PROTECT STUDENT PAGE ====================
+
+app.use(
+
+    "/protected/protected.html",
+
+    passport.authenticate(
+
+        WebAppStrategy.STRATEGY_NAME,
+
+        {
+
+            session: false
+
+        }
+
+    )
+
+);
+
+// ================= STATIC FOLDERS ====================
+
+app.use(express.static("public"));
+
+app.use("/protected", express.static("protected"));
+
+// ================= ADMIN LOGIN ====================
+
 const ADMIN = {
-  email: "admin@gmail.com",
-  password: "12345"
+
+    email: "office@greenvally.com",
+
+    password: "Green@2026"
+
 };
 
-// 👉 Login API
-app.post("/admin/login", (req, res) => {
+// ================= ADMIN MIDDLEWARE ====================
 
-  const { email, password } = req.body;
+function isAdmin(req, res, next) {
 
-  if(email === ADMIN.email && password === ADMIN.password){
+    if (req.session.isAdmin) {
 
-    req.session.isAdmin = true;
+        next();
 
-    res.json({ success: true });
+    } else {
 
-  } else {
-    res.json({ success: false });
-  }
+        res.redirect("/adminlogin.html");
+
+    }
+
+}
+app.get("/protected/admin.html", isAdmin, (req, res) => {
+
+    res.sendFile(__dirname + "/protected/admin.html");
 
 });
 
 
-function isAdmin(req, res, next){
-    if(req.session.isAdmin){
-        next();
+app.use("/api/students", isAdmin);
+
+// ================= ADMIN LOGIN API ====================
+
+app.post("/admin/login", (req, res) => {
+
+    const {
+
+        email,
+
+        password
+
+    } = req.body;
+
+    if (
+
+        email === ADMIN.email &&
+
+        password === ADMIN.password
+
+    ) {
+
+       req.session.isAdmin = true;
+
+req.session.save(() => {
+
+    res.json({
+        success: true
+    });
+
+});
+
     } else {
-        res.redirect("/admin-login.html");
+
+        res.json({
+
+            success: false
+
+        });
+
     }
+
+});
+
+// ================= LOGOUT ====================
+
+app.get("/logout", (req, res) => {
+
+    req.session.destroy(() => {
+
+        res.clearCookie("connect.sid");
+
+        res.clearCookie("refreshToken");
+
+        res.redirect("/");
+
+    });
+
+});
+
+// ================= GET USER PROFILE ====================
+
+app.get("/protected/api/idPayload", async (req, res) => {
+
+    try {
+
+        if (!req.session[WebAppStrategy.AUTH_CONTEXT]) {
+
+            return res.status(401).send("Not Logged In");
+
+        }
+
+        const user = req.session[WebAppStrategy.AUTH_CONTEXT]
+
+            .identityTokenPayload;
+
+        const userData = {
+
+            _id: user.sub,
+
+            name: user.name,
+
+            email: user.email,
+
+            timestamp: new Date()
+
+        };
+
+        try {
+
+            await cloudant.postDocument({
+
+                db: dbName,
+
+                document: userData
+
+            });
+
+            console.log("✅ User Stored");
+
+        } catch (err) {
+
+            console.log("User already exists");
+
+        }
+
+        res.send(user);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Error");
+
+    }
+
+});
+
+// ================= REGISTER STUDENT ====================
+
+app.post("/api/register", async (req, res) => {
+
+    const data = req.body;
+
+    try {
+
+        // Aadhaar duplicate check
+
+        const existing = await cloudant.postFind({
+
+            db: dbName,
+
+            selector: {
+
+                aadhar: data.aadhar
+
+            }
+
+        });
+
+        if (existing.result.docs.length > 0) {
+
+            return res.json({
+
+                message: "❌ Aadhaar Already Exists"
+
+            });
+
+        }
+
+        // Count students
+
+        const result = await cloudant.postFind({
+
+            db: dbName,
+
+            selector: {
+
+                type: "student"
+
+            }
+
+        });
+
+        let count = result.result.docs.length;
+
+        // New Student Object
+
+        let newStudent = {
+
+            _id: "student_" + (count + 1),
+
+            type: "student",
+
+            studentId: count + 1,
+
+            name: data.name,
+
+            aadhar: data.aadhar,
+
+            email: data.email,
+
+            phone: data.phone,
+
+            dob: data.dob,
+
+            gender: data.gender,
+
+            course: data.course,
+
+            fatherName: data.fatherName,
+
+            motherName: data.motherName,
+
+            parentPhone: data.parentPhone,
+
+            address: data.address,
+
+            createdAt: new Date()
+
+        };
+
+        // Save Student
+
+        await cloudant.postDocument({
+
+            db: dbName,
+
+            document: newStudent
+
+        });
+
+        res.json({
+
+            message: "✅ Student Registered Successfully",
+
+            studentId: newStudent.studentId
+
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Error");
+
+    }
+
+});
+
+// ================= STUDENT COUNT ====================
+
+app.get("/api/students/count", async (req, res) => {
+
+    try {
+
+        const result = await cloudant.postFind({
+
+            db: dbName,
+
+            selector: {
+
+                type: "student"
+
+            }
+
+        });
+
+        res.json({
+
+            total: result.result.docs.length
+
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Error");
+
+    }
+
+});
+
+// ================= GET ALL STUDENTS ====================
+
+app.get("/api/students", isAdmin, async (req, res) => {
+
+    try {
+
+        const result = await cloudant.postFind({
+
+            db: dbName,
+
+            selector: {
+
+                type: "student"
+
+            }
+
+        });
+
+        res.json(result.result.docs);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Error");
+
+    }
+
+});
+
+// ================= ERROR PAGE ====================
+
+app.get("/error", (req, res) => {
+
+    res.send("Authentication Error");
+
+});
+
+// ================= START SERVER ====================
+
+app.listen(port, () => {
+
+    console.log("================================");
+
+    console.log("✅ Server Running");
+
+    console.log("🌍 http://localhost:" + port);
+
+    console.log("================================");
+
+});
+
+// ================= APP ID CONFIG ====================
+
+function getAppIDConfig() {
+
+    let cfg;
+
+    try {
+
+        cfg = require('./localdev-config.json');
+
+    } catch (e) {
+
+        if (process.env.APPID_SERVICE_BINDING) {
+
+            cfg = JSON.parse(
+
+                process.env.APPID_SERVICE_BINDING
+
+            );
+
+            cfg.redirectUri = process.env.redirectUri;
+
+        } else {
+
+            let vcapApplication = JSON.parse(
+
+                process.env["VCAP_APPLICATION"]
+
+            );
+
+            return {
+
+                redirectUri:
+
+                    "https://" +
+
+                    vcapApplication["application_uris"][0] +
+
+                    CALLBACK_URL
+
+            };
+
+        }
+
+    }
+
+    return cfg;
+
 }
-
-// 👉 protect admin page
-app.use("/protected/admin.html", isAdmin);
-
-//******************* */
