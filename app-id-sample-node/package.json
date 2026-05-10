@@ -8,10 +8,12 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "@ibm-cloud/cloudant": "^0.12.18",
+    "@ibm-cloud/cloudant": "^0.12.19",
+    "body-parser": "^2.2.2",
     "cfenv": "^1.2.2",
-    "express": "^4.17.1",
+    "express": "^4.22.1",
     "express-session": "^1.17.1",
+    "ibm-cloud-sdk-core": "^5.4.14",
     "ibmcloud-appid": "^7.0.0",
     "jquery.json-viewer": "^1.4.0",
     "passport": "^0.6.0"

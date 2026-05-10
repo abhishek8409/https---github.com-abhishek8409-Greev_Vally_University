@@ -1,0 +1,88 @@
+<!-- add-teacher.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Management</title>
+
+<link rel="stylesheet" href="teachers.css">
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="heading">
+        <h1>Green Vally Teacher Management</h1>
+    </div>
+
+    <!-- Total Teacher Count -->
+
+    <div class="card">
+        <div class="count-box">
+            Total Teachers :
+            <span id="teacherCount">0</span>
+        </div>
+    </div>
+
+    <!-- Add Teacher Form -->
+
+    <div class="card">
+
+        <h2>Add Teacher</h2>
+
+        <form id="teacherForm">
+
+            <input type="text" id="name" placeholder="Teacher Name" required>
+
+            <input type="text" id="subject" placeholder="Subject" required>
+
+            <input type="number" id="mobile" placeholder="Mobile Number" required>
+
+            <input type="email" id="email" placeholder="Email Address" required>
+
+            <input type="text" id="qualification" placeholder="Qualification">
+
+            <button type="submit">
+                Add Teacher
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- Teacher List -->
+
+    <div class="card">
+
+        <h2>Teacher List</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Name</th>
+                    <th>Subject</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Qualification</th>
+                    <th>Delete</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="teacherTable"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<script src="teachers.js"></script>
+
+</body>
+</html>

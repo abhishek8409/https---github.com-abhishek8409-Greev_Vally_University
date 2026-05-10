@@ -28,6 +28,9 @@ const CALLBACK_URL = "/ibm/cloud/appid/callback";
 
 const port = process.env.PORT || 3000;
 
+
+app.use(express.static('public'));
+
 // ================= CLOUDANT ====================
 
 const cloudant = CloudantV1.newInstance({
@@ -593,3 +596,158 @@ function getAppIDConfig() {
     return cfg;
 
 }
+
+//teachers page
+
+
+
+// Add Teacher
+
+app.post('/add-teacher', async (req,res)=>{
+
+    try{
+
+        const teacherData = {
+
+            type:'teacher',
+
+            name:req.body.name,
+
+            subject:req.body.subject,
+
+            mobile:req.body.mobile,
+
+            email:req.body.email,
+
+            qualification:req.body.qualification
+
+        };
+
+        const response = await cloudant.postDocument({
+
+            db:dbName,
+
+            document:teacherData
+
+        });
+
+        res.json({
+
+            success:true,
+
+            message:'Teacher Added Successfully'
+
+        });
+
+    }
+    catch(err){
+
+        res.status(500).json(err);
+
+    }
+
+});
+
+
+// Get Teachers
+
+app.get('/teachers', async (req,res)=>{
+
+    try{
+
+        const data = await cloudant.postFind({
+
+            db:dbName,
+
+            selector:{
+                type:'teacher'
+            }
+
+        });
+
+        res.json(data.result.docs);
+
+    }
+    catch(err){
+
+        res.status(500).json(err);
+
+    }
+
+});
+
+
+// Teacher Count
+
+app.get('/teacher-count', async (req,res)=>{
+
+    try{
+
+        const data = await cloudant.postFind({
+
+            db:dbName,
+
+            selector:{
+                type:'teacher'
+            }
+
+        });
+
+        res.json({
+
+            totalTeachers:data.result.docs.length
+
+        });
+
+    }
+    catch(err){
+
+        res.status(500).json(err);
+
+    }
+
+});
+
+
+// Delete Teacher
+
+app.delete('/delete-teacher/:id', async (req,res)=>{
+
+    try{
+
+        const id = req.params.id;
+
+        const doc = await cloudant.getDocument({
+
+            db:dbName,
+
+            docId:id
+
+        });
+
+        await cloudant.deleteDocument({
+
+            db:dbName,
+
+            docId:id,
+
+            rev:doc.result._rev
+
+        });
+
+        res.json({
+
+            success:true,
+
+            message:'Teacher Deleted'
+
+        });
+
+    }
+    catch(err){
+
+        res.status(500).json(err);
+
+    }
+
+});

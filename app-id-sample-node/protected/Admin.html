@@ -57,8 +57,8 @@
             </div>
 
             <div class="card">
-                <h3>Teachers</h3>
-                <p>0</p>
+                <h3><a href="./stylesheets/office/teachers.html">Teachers</a></h3>
+                <p><span id="teacherCount">0</span></p>
             </div>
 
             <div class="card">
@@ -115,6 +115,18 @@ fetch("/api/students/count")
 .then(data => {
     document.getElementById("studentCount").innerText = data.total;
 });
+
+// 🔥 Teacher Count API
+
+fetch("/teacher-count")
+.then(res => res.json())
+.then(data => {
+
+    document.getElementById("teacherCount")
+    .innerText = data.totalTeachers;
+
+});
+
 </script>
 
 </body>
