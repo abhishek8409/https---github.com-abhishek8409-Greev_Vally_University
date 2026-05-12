@@ -1,86 +1,263 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <title>Students Details</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            padding:20px;
+            background:#f5f5f5;
+        }
+
+        h2{
+            color:#0a4d68;
+        }
+
+        #search{
+            width:300px;
+            padding:10px;
+            border-radius:5px;
+            border:1px solid gray;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+            margin-top:20px;
+        }
+
+        th{
+            background:#0a4d68;
+            color:white;
+            padding:12px;
+        }
+
+        td{
+            padding:10px;
+            text-align:center;
+        }
+
+        tr:nth-child(even){
+            background:#f2f2f2;
+        }
+
+        tr:hover{
+            background:#ddd;
+        }
+
+        .paid{
+            color:green;
+            font-weight:bold;
+        }
+
+        .partial{
+            color:orange;
+            font-weight:bold;
+        }
+
+        .pending{
+            color:red;
+            font-weight:bold;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-<h2>All Students Full Details</h2><br><br>
-<hr>
+<h2>GREEN VALLY UNIVERSITY - STUDENTS DETAILS</h2>
 
-<input type="text" id="search" placeholder="Search student..." onkeyup="searchStudent()"><br><br><hr>
+<hr><br>
 
+<input
+type="text"
+id="search"
+placeholder="Search student..."
+onkeyup="searchStudent()"
+>
 
-<table border="1" width="100%">
+<br><br>
+
+<table border="1">
+
     <thead>
-<tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Phone</th>
-    <th>Course</th>
-    <th>Father</th>
-    <th>Mother</th>
-    <th>Parent Phone</th>
-    <th>DOB</th>
-    <th>Gender</th>
-    <th>Address</th>
-    <th>Aadhar</th>
-</tr>
-</thead>
+
+        <tr>
+
+            <th>Student ID</th>
+
+            <th>Name</th>
+
+            <th>Email</th>
+
+            <th>Phone</th>
+
+            <th>Course</th>
+
+            <th>Father</th>
+
+            <th>Mother</th>
+
+            <th>Parent Phone</th>
+
+            <th>DOB</th>
+
+            <th>Gender</th>
+
+            <th>Address</th>
+
+            <th>Aadhar</th>
+
+            <th>Fee Status</th>
+
+        </tr>
+
+    </thead>
 
     <tbody id="studentTable"></tbody>
+
 </table>
 
+
 <script>
+
+// ================= GET STUDENTS =================
+
 fetch("/api/students")
+
 .then(res => res.json())
+
 .then(data => {
 
     let rows = "";
 
+    // First Create Rows
+
     data.forEach(student => {
 
-    rows += `
+        rows += `
 
-    <tr>
+        <tr>
 
-        <td>${student.studentId || ''}</td>
+            <td>${student.studentId || ''}</td>
 
-        <td>${student.name || ''}</td>
+            <td>${student.name || ''}</td>
 
-        <td>${student.email || ''}</td>
+            <td>${student.email || ''}</td>
 
-        <td>${student.phone || ''}</td>
+            <td>${student.phone || ''}</td>
 
-        <td>${student.course || ''}</td>
+            <td>${student.course || ''}</td>
 
-        <td>${student.fatherName || ''}</td>
+            <td>${student.fatherName || ''}</td>
 
-        <td>${student.motherName || ''}</td>
+            <td>${student.motherName || ''}</td>
 
-        <td>${student.parentPhone || ''}</td>
+            <td>${student.parentPhone || ''}</td>
 
-        <td>${student.dob || ''}</td>
+            <td>${student.dob || ''}</td>
 
-        <td>${student.gender || ''}</td>
+            <td>${student.gender || ''}</td>
 
-        <td>${student.address || ''}</td>
+            <td>${student.address || ''}</td>
 
-        <td>${student.aadhar || ''}</td>
+            <td>${student.aadhar || ''}</td>
 
-    </tr>
+            <td id="fee-${student.studentId}">
+                Loading...
+            </td>
 
-    `;
-});
+        </tr>
+
+        `;
+
+    });
+
+    // Show Table
 
     document.getElementById("studentTable").innerHTML = rows;
+
+    // ================= GET FEE STATUS =================
+
+   data.forEach(student => {
+
+    fetch('/student-fee-status/' +
+    encodeURIComponent(student.studentId))
+
+    .then(res => res.json())
+
+    .then(fee => {
+
+        let element = document.getElementById(
+            'fee-' + student.studentId
+        );
+
+        element.innerText = fee.status;
+
+        if(fee.status === "Paid"){
+
+            element.classList.add("paid");
+
+        }
+        else if(fee.status === "Partial"){
+
+            element.classList.add("partial");
+
+        }
+        else{
+
+            element.classList.add("pending");
+
+        }
+
+    });
+
+});
+
 });
 
 
+// ================= SEARCH STUDENT =================
+
+function searchStudent(){
+
+    let input =
+    document.getElementById("search")
+    .value
+    .toLowerCase();
+
+    let table =
+    document.getElementById("studentTable");
+
+    let tr = table.getElementsByTagName("tr");
+
+    for(let i = 0; i < tr.length; i++){
+
+        let text =
+        tr[i].innerText.toLowerCase();
+
+        if(text.indexOf(input) > -1){
+
+            tr[i].style.display = "";
+
+        } else {
+
+            tr[i].style.display = "none";
+
+        }
+
+    }
+
+}
+
 </script>
-<script src="./students.js"></script>
 
 </body>
+
 </html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Streams - Green Vally University</title>
+
+<link rel="stylesheet" href="stream.css">
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>GREEN VALLY UNIVERSITY</h1>
+
+    <h2>Available Streams</h2>
+
+    <div class="stream-box">
+
+        <div class="card">
+            <h3>BCA</h3>
+            <p id="bcaCount">0 Students</p>
+            <p>Computer Applications & Programming</p>
+            <button onclick="showDetails('BCA')">
+                View Details
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>BBA</h3>
+            <p id="bbaCount">0 Students</p>
+            <p>Business Administration & Management</p>
+            <button onclick="showDetails('BBA')">
+                View Details
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>B.COM</h3>
+            <p id="bcomCount">0 Students</p>
+            <p>Commerce & Accounting</p>
+            <button onclick="showDetails('BCOM')">
+                View Details
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>BA</h3>
+            <p id="baCount">0 Students</p>
+            <p>Arts & Humanities</p>
+            <button onclick="showDetails('BA')">
+                View Details
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>B.SC</h3>
+            <p id="bscCount">0 Students</p>
+            <p>Science & Research</p>
+            <button onclick="showDetails('BSC')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>B.Tech</h3>
+            <p id="btechCount">0 Students</p>
+            <p>Computer Applications & Programming</p>
+            <button onclick="showDetails('BTECH')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>MCA</h3>
+            <p id="mcaCount">0 Students</p>
+            <p>Computer Applications & Programming</p>
+            <button onclick="showDetails('MCA')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>MA</h3>
+            <p id="maCount">0 Students</p>
+            <p>Arts & Humanities</p>
+            <button onclick="showDetails('MA')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>DIPLOMA</h3>
+            <p id="diplomaCount">0 Students</p>
+            <p>engineering, medical, computer</p>
+            <button onclick="showDetails('DIPLOMA')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>ITI</h3>
+            <p id="itiCount">0 Students</p>
+            <p>Electrician & Plumber</p>
+            <button onclick="showDetails('ITI')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>LAW</h3>
+            <p id="lawCount">0 Students</p>
+            <p>Civil Laws</p>
+            <button onclick="showDetails('LAW')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>B.PHARMA</h3>
+            <p id="bpharmaCount">0 Students</p>
+            <p>Medical</p>
+            <button onclick="showDetails('BPHARMA')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>D.PHARMA</h3>
+            <p id="dpharmaCount">0 Students</p>
+            <p>Medical</p>
+            <button onclick="showDetails('DPHARMA')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>NURSING</h3>
+            <p id="nursingCount">0 Students</p>
+            <p>Drugs & Medicine</p>
+            <button onclick="showDetails('NURSING')">
+                View Details
+            </button>
+        </div>
+         <div class="card">
+            <h3>M.COM</h3>
+            <p id="mcomCount">0 Students</p>
+            <p>Commerce & Accounting</p>
+            <button onclick="showDetails('MCOM')">
+                View Details
+            </button>
+        </div>
+
+        </div>
+        </div>
+   <script>
+
+fetch('/stream-count')
+
+.then(res => res.json())
+
+.then(data => {
+
+    document.getElementById("bcaCount")
+    .innerText = data.BCA + " Students";
+
+    document.getElementById("bbaCount")
+    .innerText = data.BBA + " Students";
+
+    document.getElementById("bcomCount")
+    .innerText = data.BCOM + " Students";
+
+    document.getElementById("baCount")
+    .innerText = data.BA + " Students";
+
+    document.getElementById("bscCount")
+    .innerText = data.BSC + " Students";
+
+    document.getElementById("btechCount")
+    .innerText = data.BTECH + " Students";
+
+    document.getElementById("mcaCount")
+    .innerText = data.MCA + " Students";
+
+    document.getElementById("maCount")
+    .innerText = data.MA + " Students";
+
+    document.getElementById("diplomaCount")
+    .innerText = data.DIPLOMA + " Students";
+
+    document.getElementById("itiCount")
+    .innerText = data.ITI + " Students";
+
+    document.getElementById("lawCount")
+    .innerText = data.LAW + " Students";
+
+    document.getElementById("bpharmaCount")
+    .innerText = data.BPHARMA + " Students";
+
+    document.getElementById("dpharmaCount")
+    .innerText = data.DPHARMA + " Students";
+
+    document.getElementById("nursingCount")
+    .innerText = data.NURSING + " Students";
+
+    document.getElementById("mcomCount")
+    .innerText = data.MCOM + " Students";
+
+});
+
+</script>
+</body>
+</html>

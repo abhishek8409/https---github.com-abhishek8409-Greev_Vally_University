@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fees Management</title>
+
+<link rel="stylesheet" href="fees.css">
+
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Fees Management</h1>
+
+    <!-- Total Collection -->
+
+    <div class="card">
+
+        <h2>
+            Total Fees Collection :
+            ₹<span id="totalCollection">0</span>
+        </h2>
+
+    </div>
+
+    <!-- Add Fee Form -->
+
+    <div class="card">
+
+        <form id="feeForm">
+
+            <input
+            type="text"
+            id="studentName"
+            placeholder="Student Name"
+            required>
+
+            <!-- IMPORTANT FIX -->
+
+            <input
+            type="text"
+            id="studentId"
+            placeholder="Student ID (GVU/001)"
+            required>
+
+            <input
+            type="text"
+            id="course"
+            placeholder="Course"
+            required>
+
+            <input
+            type="number"
+            id="totalFee"
+            placeholder="Total Fee"
+            required>
+
+            <input
+            type="number"
+            id="paidFee"
+            placeholder="Paid Fee"
+            required>
+
+            <button type="submit">
+                Add Fee
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- Fee Table -->
+
+    <div class="card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Student</th>
+
+                    <th>ID</th>
+
+                    <th>Course</th>
+
+                    <th>Total Fee</th>
+
+                    <th>Paid</th>
+
+                    <th>Remaining</th>
+
+                    <th>Delete</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="feeTable"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+// ================= ADD FEE =================
+
+document.getElementById("feeForm")
+
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const data = {
+
+        studentName:
+        document.getElementById("studentName").value,
+
+        studentId:
+        document.getElementById("studentId").value,
+
+        course:
+        document.getElementById("course").value,
+
+        totalFee:
+        document.getElementById("totalFee").value,
+
+        paidFee:
+        document.getElementById("paidFee").value
+
+    };
+
+    const response = await fetch('/add-fee', {
+
+        method:'POST',
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify(data)
+
+    });
+
+    const result = await response.json();
+
+    alert(result.message);
+
+    location.reload();
+
+});
+
+
+// ================= GET FEES =================
+
+async function loadFees(){
+
+    const response = await fetch('/fees');
+
+    const data = await response.json();
+
+    let rows = '';
+
+    data.forEach(fee => {
+
+        rows += `
+
+        <tr>
+
+            <td>${fee.studentName}</td>
+
+            <td>${fee.studentId}</td>
+
+            <td>${fee.course}</td>
+
+            <td>₹${fee.totalFee}</td>
+
+            <td>₹${fee.paidFee}</td>
+
+            <td>₹${fee.remainingFee}</td>
+
+            <td>
+
+                <button onclick="deleteFee('${fee._id}')">
+
+                    Delete
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("feeTable")
+    .innerHTML = rows;
+
+}
+
+loadFees();
+
+
+// ================= TOTAL COLLECTION =================
+
+async function totalCollection(){
+
+    const response = await fetch('/fees-total');
+
+    const data = await response.json();
+
+    document.getElementById("totalCollection")
+    .innerText = data.total;
+
+}
+
+totalCollection();
+
+
+// ================= DELETE FEE =================
+
+async function deleteFee(id){
+
+    if(confirm("Delete Fee?")){
+
+        await fetch('/delete-fee/' + id, {
+
+            method:'DELETE'
+
+        });
+
+        location.reload();
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -17,7 +17,7 @@
         <ul>
             <li class="active">Dashboard</li>
             <li><a href="./stylesheets/office/students.html">Students</a></li>
-            <li>FeesCollection</li>
+            <li><a href="./stylesheets/office/fees.html">FeeCollection</a></li>
             <li>Hostels</li>
             <li>Classes</li>
             <li>Sessions</li>
@@ -47,8 +47,8 @@
             </div>
 
             <div class="card">
-                <h3>Fees Collection</h3>
-                <p>0</p>
+                <h3><a href="./stylesheets/office/fees.html">Fee Collection</a></h3>
+                <p><span id="feeCount">0</span></p>
             </div>
 
             <div class="card">
@@ -62,8 +62,8 @@
             </div>
 
             <div class="card">
-                <h3>Subjects</h3>
-                <p>0</p>
+                <h3><a href="./stylesheets/office/subjects.html">Subjects</a></h3>
+                <p>71+</p>
             </div>
 
             <div class="card">
@@ -72,8 +72,8 @@
             </div>
 
             <div class="card">
-                <h3>Streams</h3>
-                <p>0</p>
+                <h3><a href="stylesheets/office/stream.html">Streams</a></h3>
+                <p><span id="streamCount">0</span></p>
             </div>
 
             <div class="card">
@@ -126,6 +126,33 @@ fetch("/teacher-count")
     .innerText = data.totalTeachers;
 
 });
+
+//fees collection
+
+fetch("/fees-total")
+.then(res => res.json())
+.then(data => {
+
+    document.getElementById("feeCount")
+    .innerText = "₹" + data.total;
+
+});
+
+
+// ================= STREAM COUNT =================
+
+async function loadStreamCount(){
+
+    const response = await fetch('/stream-total');
+
+    const data = await response.json();
+
+    document.getElementById("streamCount")
+    .innerText = data.totalStreams;
+
+}
+
+loadStreamCount();
 
 </script>
 
