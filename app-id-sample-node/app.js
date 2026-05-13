@@ -197,23 +197,19 @@ passport.deserializeUser((obj, cb) => cb(null, obj));
 // ================= APP ID CALLBACK ====================
 
 app.get(
-
     CALLBACK_URL,
-
     passport.authenticate(
-
         WebAppStrategy.STRATEGY_NAME,
-
         {
-
             failureRedirect: "/error",
-
             session: true
-
         }
+    ),
+    (req, res) => {
 
-    )
+        res.redirect("/protected/protected.html");
 
+    }
 );
 
 
@@ -322,13 +318,17 @@ app.post("/admin/login", (req, res) => {
 
 app.get("/logout", (req, res) => {
 
-    req.session.destroy(() => {
+    req.logout(() => {
 
-        res.clearCookie("connect.sid");
+        req.session.destroy(() => {
 
-        res.clearCookie("refreshToken");
+            res.clearCookie("connect.sid");
 
-        res.redirect("/");
+            res.clearCookie("refreshToken");
+
+            res.redirect("/");
+
+        });
 
     });
 
@@ -1124,6 +1124,17 @@ app.get('/stream-count', async (req, res) => {
     }
 
 });
+
+
+// ================= APP ID LOGIN ====================
+
+app.get("/login",
+
+    passport.authenticate(
+        WebAppStrategy.STRATEGY_NAME
+    )
+
+);
 // ================= START SERVER ====================
 
 app.listen(port, () => {
@@ -1137,3 +1148,6 @@ app.listen(port, () => {
     console.log("================================");
 
 });
+
+
+
