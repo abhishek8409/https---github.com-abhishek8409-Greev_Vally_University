@@ -58,32 +58,58 @@ const cloudant = CloudantV1.newInstance({
 
 cloudant.setServiceUrl(config.CLOUDANT_URL);
 
-const dbName = "users";
+const studentDB = "students";
+
+const teacherDB = "teachers";
+
+const feeDB = "fees";
+
+const userDB = "users";
 
 
 // ================= DATABASE CREATE ====================
 
-async function createDatabase() {
+async function createDatabases() {
 
-    try {
+    const databases = [
 
-        await cloudant.putDatabase({
+        studentDB,
 
-            db: dbName
+        teacherDB,
 
-        });
+        feeDB,
 
-        console.log("✅ Database Created");
+        userDB
 
-    } catch (err) {
+    ];
 
-        if (err.code === 412) {
+    for (let db of databases) {
 
-            console.log("✅ Database Already Exists");
+        try {
 
-        } else {
+            await cloudant.putDatabase({
 
-            console.log(err);
+                db: db
+
+            });
+
+            console.log(`✅ ${db} Created`);
+
+        }
+
+        catch (err) {
+
+            if (err.code === 412) {
+
+                console.log(`✅ ${db} Already Exists`);
+
+            }
+
+            else {
+
+                console.log(err);
+
+            }
 
         }
 
@@ -91,7 +117,7 @@ async function createDatabase() {
 
 }
 
-createDatabase();
+createDatabases();
 
 
 // ================= INDEX CREATE ====================
@@ -102,11 +128,11 @@ async function createIndex() {
 
         await cloudant.postIndex({
 
-            db: dbName,
+            db: studentDB,
 
             index: {
 
-                fields: ["type", "aadhar"]
+                fields: ["aadhar"]
 
             },
 
@@ -139,7 +165,16 @@ app.use(session({
 
     saveUninitialized: false,
 
-    proxy: true
+    proxy: true,
+    cookie: {
+
+    secure: false,
+
+    httpOnly: true,
+
+    maxAge: 1000 * 60 * 60
+
+}
 
 }));
 
@@ -173,7 +208,7 @@ app.get(
 
             failureRedirect: "/error",
 
-            session: false
+            session: true
 
         }
 
@@ -194,7 +229,7 @@ app.use(
 
         {
 
-            session: false
+            session: true
 
         }
 
@@ -332,7 +367,7 @@ app.get("/protected/api/idPayload", async (req, res) => {
 
             await cloudant.postDocument({
 
-                db: dbName,
+                db: userDB,
 
                 document: userData
 
@@ -371,7 +406,7 @@ app.post("/api/register", async (req, res) => {
 
         const existing = await cloudant.postFind({
 
-            db: dbName,
+            db: studentDB,
 
             selector: {
 
@@ -395,13 +430,9 @@ app.post("/api/register", async (req, res) => {
 
         const result = await cloudant.postFind({
 
-            db: dbName,
+            db: studentDB,
 
-            selector: {
-
-                type: "student"
-
-            }
+            selector: {}
 
         });
 
@@ -448,7 +479,7 @@ app.post("/api/register", async (req, res) => {
 
         await cloudant.postDocument({
 
-            db: dbName,
+            db: studentDB,
 
             document: newStudent
 
@@ -481,13 +512,9 @@ app.get("/api/students/count", async (req, res) => {
 
         const result = await cloudant.postFind({
 
-            db: dbName,
+            db: studentDB,
 
-            selector: {
-
-                type: "student"
-
-            }
+            selector: { }
 
         });
 
@@ -516,13 +543,9 @@ app.get("/api/students", isAdmin, async (req, res) => {
 
         const result = await cloudant.postFind({
 
-            db: dbName,
+            db: studentDB,
 
-            selector: {
-
-                type: "student"
-
-            }
+            selector: { }
 
         });
 
@@ -565,7 +588,7 @@ app.post('/add-teacher', async (req, res) => {
 
         await cloudant.postDocument({
 
-            db: dbName,
+            db: teacherDB,
 
             document: teacherData
 
@@ -599,11 +622,9 @@ app.get('/teachers', async (req, res) => {
 
         const data = await cloudant.postFind({
 
-            db: dbName,
+            db: teacherDB,
 
-            selector: {
-                type: 'teacher'
-            }
+            selector: { }
 
         });
 
@@ -629,11 +650,9 @@ app.get('/teacher-count', async (req, res) => {
 
         const data = await cloudant.postFind({
 
-            db: dbName,
+            db: teacherDB,
 
-            selector: {
-                type: 'teacher'
-            }
+            selector: { }
 
         });
 
@@ -665,7 +684,7 @@ app.delete('/delete-teacher/:id', async (req, res) => {
 
         const doc = await cloudant.getDocument({
 
-            db: dbName,
+            db: teacherDB,
 
             docId: id
 
@@ -673,7 +692,7 @@ app.delete('/delete-teacher/:id', async (req, res) => {
 
         await cloudant.deleteDocument({
 
-            db: dbName,
+            db: teacherDB,
 
             docId: id,
 
@@ -733,7 +752,7 @@ app.post('/add-fee', async (req, res) => {
 
         await cloudant.postDocument({
 
-            db: dbName,
+            db: feeDB,
 
             document: feeData
 
@@ -767,11 +786,9 @@ app.get('/fees', async (req, res) => {
 
         const data = await cloudant.postFind({
 
-            db: dbName,
+            db: feeDB,
 
-            selector: {
-                type: 'fee'
-            }
+            selector: { }
 
         });
 
@@ -797,11 +814,9 @@ app.get('/fees-total', async (req, res) => {
 
         const data = await cloudant.postFind({
 
-            db: dbName,
+            db: feeDB,
 
-            selector: {
-                type: 'fee'
-            }
+            selector: {}
 
         });
 
@@ -837,7 +852,7 @@ app.delete('/delete-fee/:id', async (req, res) => {
 
         const doc = await cloudant.getDocument({
 
-            db: dbName,
+            db: feeDB,
 
             docId: id
 
@@ -845,7 +860,7 @@ app.delete('/delete-fee/:id', async (req, res) => {
 
         await cloudant.deleteDocument({
 
-            db: dbName,
+            db: feeDB,
 
             docId: id,
 
@@ -879,11 +894,9 @@ app.get('/update-old-ids', async (req, res) => {
 
         const result = await cloudant.postFind({
 
-            db: dbName,
+            db: studentDB,
 
-            selector: {
-                type: "student"
-            }
+            selector: { }
 
         });
 
@@ -898,7 +911,7 @@ app.get('/update-old-ids', async (req, res) => {
 
             await cloudant.putDocument({
 
-                db: dbName,
+                db: studentDB,
 
                 docId: student._id,
 
@@ -993,10 +1006,9 @@ app.get('/student-fee-status/:studentId', async (req, res) => {
 
         const data = await cloudant.postFind({
 
-            db: dbName,
+            db: feeDB,
 
             selector: {
-                type: 'fee',
                 studentId: studentId
             }
 
@@ -1062,11 +1074,9 @@ app.get('/stream-count', async (req, res) => {
 
         const result = await cloudant.postFind({
 
-            db: dbName,
+            db: studentDB,
 
-            selector: {
-                type: "student"
-            }
+            selector: { }
 
         });
 
