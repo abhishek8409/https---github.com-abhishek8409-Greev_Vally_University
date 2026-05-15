@@ -52,30 +52,46 @@
                 <label><input type="radio" name="gender"> Other</label>
             </div>
 
-            <label>Course</label>
-            <select required>
-                <option value="">Select Course</option>
-                <option>BCA</option>
-                <option>BBA</option>
-                <option>B.Tech</option>
-                <option>MCA</option>
-                <option>M.A</option>
-                <option>B.A</option>
-                <option>diploma</option>
-                <option>ITI</option>
-                <option>Law</option>
-                <option>B.Pharma</option>
-                <option>D.Pharma</option>
-                <option>Nursing</option>
-                <option>B.com</option>
-                <option>M.com</option>
-            </select>
+           <label>Course</label>
 
+<select id="course" required>
+
+    <option value="">Select Course</option>
+
+    <option value="BCA">BCA</option>
+
+    <option value="BBA">BBA</option>
+
+    <option value="BTECH">B.Tech</option>
+
+    <option value="MCA">MCA</option>
+
+    <option value="MA">M.A</option>
+
+    <option value="BA">B.A</option>
+
+    <option value="DIPLOMA">DIPLOMA</option>
+
+    <option value="ITI">ITI</option>
+
+    <option value="LAW">LAW</option>
+
+    <option value="BPHARMA">B.PHARMA</option>
+
+    <option value="DPHARMA">D.PHARMA</option>
+
+    <option value="NURSING">NURSING</option>
+
+    <option value="BCOM">B.COM</option>
+
+    <option value="MCOM">M.COM</option>
+
+</select>
             <label for="father">Father's Name</label>
-            <input type="text" placeholder="Father's Name" required>
+            <input type="text" id="fatherName" placeholder="Father's Name" required>
 
             <label for="mother">Mother's Name</label>
-            <input type="text" placeholder="Mother's name" required>
+            <input type="text" id="motherName" placeholder="Mother's name" required>
 
             <label>Parent Phone Number</label>
 
@@ -153,11 +169,11 @@
 
                 gender: document.querySelector("input[name='gender']:checked")?.parentElement.innerText || "",
 
-                course: document.querySelector("select").value,
+                course: document.getElementById("course").value,
 
-                fatherName: document.querySelectorAll("input[type='text']")[1].value,
+                fatherName: document.getElementById("fatherName").value,
 
-                motherName: document.querySelectorAll("input[type='text']")[2].value,
+                motherName: document.getElementById("motherName").value,
 
                 parentPhone:
                     document.getElementById("parentCountryCode").value +
@@ -180,6 +196,7 @@
             let result = await res.json();
 
             alert(result.message);
+            document.getElementById("regForm").reset();
 
         });
 

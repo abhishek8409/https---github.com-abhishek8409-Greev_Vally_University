@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>User Profile</title>
+
+    <link rel="stylesheet"
+          href="profile.css">
+
+</head>
+
+<body>
+
+    <div class="profile-box">
+
+        <img id="profileImage"
+             src=""
+             alt="profile">
+
+        <input type="file"
+               id="imageInput">
+
+        <h2 id="profileName"></h2>
+
+        <input type="text"
+               id="editName"
+               placeholder="Edit Name">
+
+        <button id="saveBtn">
+            Save Changes
+        </button>
+
+    </div>
+<script>
+
+function loadUserProfile(){
+
+    let name = localStorage.getItem("name");
+
+    let img = localStorage.getItem("profileImage");
+
+    let span = document.getElementById("userNameSpan");
+
+    let image = document.getElementById("userImg");
+
+    if(img){
+
+        image.src = img;
+
+        image.style.display = "block";
+
+        span.style.display = "none";
+
+    }
+
+    else{
+
+        span.innerText =
+            name ? name.charAt(0).toUpperCase() : "?";
+
+        span.style.display = "flex";
+
+        image.style.display = "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    loadUserProfile();
+
+    document
+        .getElementById("userProfile")
+        .addEventListener("click", function(){
+
+            window.location.href =
+                "/profile/profile.html";
+
+        });
+
+});
+
+</script>
+    <script src="profile.js"></script>
+
+</body>
+
+</html>

@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function(){
     loadUserProfile();
 
     document.getElementById("userProfile").addEventListener("click", function(){
-        window.location.href = "profile/profile.html";
+        window.location.href = "./profile.html";
     });
 
 });

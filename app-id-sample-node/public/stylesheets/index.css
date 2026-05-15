@@ -83,9 +83,10 @@ body {
     padding: 10px 30px 10px 0px;
     
 }
-#buttonheader button{
-    width: 70px;
+.buttonlogin{
+    width: 80px;
     height: 40px;
+    text-align: center;
      background-color: #4178BE;
      color: white;
     border-radius: 10px;

@@ -64,6 +64,16 @@
             color:red;
             font-weight:bold;
         }
+        button{
+
+    padding:8px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    background:red;
+    color:white;
+
+}
 
     </style>
 
@@ -153,7 +163,9 @@ fetch("/api/students")
 
             <td>${student.phone || ''}</td>
 
-            <td>${student.course || ''}</td>
+           <td>
+${formatCourse(student.course)}
+</td>
 
             <td>${student.fatherName || ''}</td>
 
@@ -172,6 +184,11 @@ fetch("/api/students")
             <td id="fee-${student.studentId}">
                 Loading...
             </td>
+            <td>
+    <button onclick="deleteStudent('${student._id}')">
+        Delete
+    </button>
+</td>
 
         </tr>
 
@@ -253,6 +270,83 @@ function searchStudent(){
         }
 
     }
+
+}
+function formatCourse(course){
+
+    if(!course) return "";
+
+    course =
+        course.toUpperCase().trim();
+
+    const courses = {
+
+        "BCA": "BCA",
+
+        "BBA": "BBA",
+
+        "BCOM": "B.COM",
+
+        "B.COM": "B.COM",
+
+        "BA": "BA",
+
+        "BSC": "B.SC",
+
+        "B.SC": "B.SC",
+
+        "BTECH": "B.Tech",
+
+        "B.TECH": "B.Tech",
+
+        "MCA": "MCA",
+
+        "MA": "MA",
+
+        "DIPLOMA": "DIPLOMA",
+
+        "ITI": "ITI",
+
+        "LAW": "LAW",
+
+        "BPHARMA": "B.PHARMA",
+
+        "B.PHARMA": "B.PHARMA",
+
+        "DPHARMA": "D.PHARMA",
+
+        "D.PHARMA": "D.PHARMA",
+
+        "NURSING": "NURSING",
+
+        "MCOM": "M.COM",
+
+        "M.COM": "M.COM"
+
+    };
+
+    return courses[course] || course;
+
+}
+async function deleteStudent(id){
+
+    let confirmDelete =
+    confirm("Delete this student?");
+
+    if(!confirmDelete) return;
+
+    let res = await fetch(
+        "/delete-student/" + id,
+        {
+            method: "DELETE"
+        }
+    );
+
+    let result = await res.json();
+
+    alert(result.message);
+
+    location.reload();
 
 }
 

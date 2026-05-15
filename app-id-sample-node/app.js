@@ -1,5 +1,5 @@
 // ===============================================
-// GREEN VALLY UNIVERSITY - FINAL app.js
+// GREEN VALLY UNIVERSITY - FINAL SECURE app.js
 // ===============================================
 
 // ================= IMPORTS =====================
@@ -18,6 +18,7 @@ const passport = require("passport");
 
 const appID = require("ibmcloud-appid");
 
+
 // ================= APP SETUP ===================
 
 const WebAppStrategy = appID.WebAppStrategy;
@@ -34,14 +35,10 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use(express.urlencoded({
-
     extended: true
-
 }));
 
-app.use(express.static("public"));
-
-app.use("/protected", express.static("protected"));
+// ONLY PUBLIC FOLDER STATIC
 
 
 // ================= CLOUDANT ====================
@@ -72,15 +69,10 @@ const userDB = "users";
 async function createDatabases() {
 
     const databases = [
-
         studentDB,
-
         teacherDB,
-
         feeDB,
-
         userDB
-
     ];
 
     for (let db of databases) {
@@ -88,15 +80,12 @@ async function createDatabases() {
         try {
 
             await cloudant.putDatabase({
-
                 db: db
-
             });
 
             console.log(`✅ ${db} Created`);
 
         }
-
         catch (err) {
 
             if (err.code === 412) {
@@ -104,7 +93,6 @@ async function createDatabases() {
                 console.log(`✅ ${db} Already Exists`);
 
             }
-
             else {
 
                 console.log(err);
@@ -131,9 +119,7 @@ async function createIndex() {
             db: studentDB,
 
             index: {
-
                 fields: ["aadhar"]
-
             },
 
             name: "student-index",
@@ -144,7 +130,8 @@ async function createIndex() {
 
         console.log("✅ Index Created");
 
-    } catch (err) {
+    }
+    catch (err) {
 
         console.log(err);
 
@@ -161,20 +148,21 @@ app.use(session({
 
     secret: "greenvallysecret",
 
-    resave: false,
+    resave: true,   //change true
 
-    saveUninitialized: false,
+    saveUninitialized: true,    //change
 
     proxy: true,
-    cookie: {
 
-    secure: false,
+    // cookie: {
 
-    httpOnly: true,
+    //     secure: false,
 
-    maxAge: 1000 * 60 * 60
+    //     httpOnly: true,
 
-}
+    //     maxAge: 1000 * 60 * 60
+
+    // }
 
 }));
 
@@ -185,7 +173,9 @@ app.use(passport.initialize());
 
 app.use(passport.session());
 
-let webAppStrategy = new WebAppStrategy(getAppIDConfig());
+let webAppStrategy = new WebAppStrategy(
+    getAppIDConfig()
+);
 
 passport.use(webAppStrategy);
 
@@ -194,43 +184,108 @@ passport.serializeUser((user, cb) => cb(null, user));
 passport.deserializeUser((obj, cb) => cb(null, obj));
 
 
+// ================= AUTH CHECK ====================
+
+function isAuthenticated(req, res, next) {
+
+    if (req.isAuthenticated()) {
+
+        return next();
+
+    }
+
+    res.redirect("/login");
+
+}
+
+
+// ================= ADMIN CHECK ====================
+
+function isAdmin(req, res, next) {
+
+    if (req.session.isAdmin) {
+
+        return next();
+
+    }
+
+    res.redirect("/adminlogin.html");
+
+}
+
+
 // ================= APP ID CALLBACK ====================
 
 app.get(
+
     CALLBACK_URL,
+
     passport.authenticate(
         WebAppStrategy.STRATEGY_NAME,
         {
             failureRedirect: "/error",
-            session: true
+            session: false  //false
         }
     ),
+
+    // (req, res) => {
+
+    //     res.redirect(
+    //         "/protected/protected.html"
+    //     );
+
+    // }
+
+);
+
+app.use("/protected", passport.authenticate(WebAppStrategy.STRATEGY_NAME, { session: false }));
+
+
+app.use(express.static("public"));
+app.use('/protected', express.static("protected"));
+
+
+// ================= APP ID LOGIN ====================
+
+app.get(
+    "/login",
+
+    passport.authenticate(
+        WebAppStrategy.STRATEGY_NAME
+    )
+
+);
+
+
+// ================= PROTECTED STUDENT PAGE ====================
+
+app.get(
+    "/protected/protected.html",
+    isAuthenticated,
     (req, res) => {
 
-        res.redirect("/protected/protected.html");
+        res.sendFile(
+            __dirname +
+            "/protected/protected.html"
+        );
 
     }
 );
 
 
-// ================= PROTECT STUDENT PAGE ====================
+// ================= ADMIN PAGE ====================
 
-app.use(
+app.get(
+    "/protected/admin.html",
+    isAdmin,
+    (req, res) => {
 
-    "/protected/protected.html",
+        res.sendFile(
+            __dirname +
+            "/protected/admin.html"
+        );
 
-    passport.authenticate(
-
-        WebAppStrategy.STRATEGY_NAME,
-
-        {
-
-            session: true
-
-        }
-
-    )
-
+    }
 );
 
 
@@ -245,50 +300,15 @@ const ADMIN = {
 };
 
 
-// ================= ADMIN MIDDLEWARE ====================
-
-function isAdmin(req, res, next) {
-
-    if (req.session.isAdmin) {
-
-        next();
-
-    } else {
-
-        res.redirect("/adminlogin.html");
-
-    }
-
-}
-
-
-// ================= ADMIN PAGE ====================
-
-app.get("/protected/admin.html", isAdmin, (req, res) => {
-
-    res.sendFile(__dirname + "/protected/admin.html");
-
-});
-
-
 // ================= ADMIN LOGIN API ====================
 
 app.post("/admin/login", (req, res) => {
 
-    const {
-
-        email,
-
-        password
-
-    } = req.body;
+    const { email, password } = req.body;
 
     if (
-
         email === ADMIN.email &&
-
         password === ADMIN.password
-
     ) {
 
         req.session.isAdmin = true;
@@ -301,12 +321,11 @@ app.post("/admin/login", (req, res) => {
 
         });
 
-    } else {
+    }
+    else {
 
         res.json({
-
             success: false
-
         });
 
     }
@@ -316,83 +335,96 @@ app.post("/admin/login", (req, res) => {
 
 // ================= LOGOUT ====================
 
+// app.get("/logout", (req, res) => {
+
+//     req.logout(() => {
+
+//         req.session.destroy(() => {
+
+//             res.clearCookie("connect.sid");
+
+//             res.clearCookie("refreshToken");
+
+//             res.redirect("/");
+
+//         });
+
+//     });
+
+// });
+
 app.get("/logout", (req, res) => {
-
-    req.logout(() => {
-
-        req.session.destroy(() => {
-
-            res.clearCookie("connect.sid");
-
-            res.clearCookie("refreshToken");
-
-            res.redirect("/");
-
-        });
-
-    });
-
+	//Note: if you enabled SSO for Cloud Directory be sure to use webAppStrategy.logoutSSO instead.
+	req._sessionManager = false;
+	WebAppStrategy.logout(req);
+	res.clearCookie("refreshToken");
+	res.redirect("/");
 });
 
 
 // ================= GET USER PROFILE ====================
 
-app.get("/protected/api/idPayload", async (req, res) => {
+// app.get(
+//     "/protected/api/idPayload",
+//     isAuthenticated,
+//     async (req, res) => {
 
-    try {
+//         try {
 
-        if (!req.session[WebAppStrategy.AUTH_CONTEXT]) {
+//             const user =
+//                 req.session[
+//                     WebAppStrategy.AUTH_CONTEXT
+//                 ].identityTokenPayload;
 
-            return res.status(401).send("Not Logged In");
+//             const userData = {
 
-        }
+//                 _id: user.sub,
 
-        const user = req.session[WebAppStrategy.AUTH_CONTEXT]
+//                 name: user.name,
 
-            .identityTokenPayload;
+//                 email: user.email,
 
-        const userData = {
+//                 timestamp: new Date()
 
-            _id: user.sub,
+//             };
 
-            name: user.name,
+//             try {
 
-            email: user.email,
+//                 await cloudant.postDocument({
 
-            timestamp: new Date()
+//                     db: userDB,
 
-        };
+//                     document: userData
 
-        try {
+//                 });
 
-            await cloudant.postDocument({
+//                 console.log("✅ User Stored");
 
-                db: userDB,
+//             }
+//             catch (err) {
 
-                document: userData
+//                 console.log("User already exists");
 
-            });
+//             }
 
-            console.log("✅ User Stored");
+//             res.send(user);
 
-        } catch (err) {
+//         }
+//         catch (err) {
 
-            console.log("User already exists");
+//             console.log(err);
 
-        }
+//             res.status(500).send("Error");
 
-        res.send(user);
+//         }
 
-    } catch (err) {
+//     }
+// );
 
-        console.log(err);
 
-        res.status(500).send("Error");
-
-    }
-
+app.get("/protected/api/idPayload", (req, res) => {
+	res.send(req.session[WebAppStrategy.AUTH_CONTEXT].identityTokenPayload);
 });
-
 
 // ================= REGISTER STUDENT ====================
 
@@ -402,52 +434,53 @@ app.post("/api/register", async (req, res) => {
 
     try {
 
-        // Aadhaar duplicate check
+        const existing =
+            await cloudant.postFind({
 
-        const existing = await cloudant.postFind({
+                db: studentDB,
 
-            db: studentDB,
+                selector: {
+                    aadhar: data.aadhar
+                }
 
-            selector: {
+            });
 
-                aadhar: data.aadhar
-
-            }
-
-        });
-
-        if (existing.result.docs.length > 0) {
+        if (
+            existing.result.docs.length > 0
+        ) {
 
             return res.json({
 
-                message: "❌ Aadhaar Already Exists"
+                message:
+                    "❌ Aadhaar Already Exists"
 
             });
 
         }
 
-        // Count students
+        const result =
+            await cloudant.postFind({
 
-        const result = await cloudant.postFind({
+                db: studentDB,
 
-            db: studentDB,
+                selector: {}
 
-            selector: {}
+            });
 
-        });
-
-        let count = result.result.docs.length;
-
-        // New Student Object
+        let count =
+            result.result.docs.length;
 
         let newStudent = {
 
-            _id: "student_" + (count + 1),
+            _id:
+                "student_" + (count + 1),
 
             type: "student",
 
             studentId:
-                "GVU/" + String(count + 1).padStart(3, '0'),
+                "GVU/" +
+                String(count + 1)
+                .padStart(3, '0'),
 
             name: data.name,
 
@@ -463,19 +496,20 @@ app.post("/api/register", async (req, res) => {
 
             course: data.course,
 
-            fatherName: data.fatherName,
+            fatherName:
+                data.fatherName,
 
-            motherName: data.motherName,
+            motherName:
+                data.motherName,
 
-            parentPhone: data.parentPhone,
+            parentPhone:
+                data.parentPhone,
 
             address: data.address,
 
             createdAt: new Date()
 
         };
-
-        // Save Student
 
         await cloudant.postDocument({
 
@@ -487,13 +521,16 @@ app.post("/api/register", async (req, res) => {
 
         res.json({
 
-            message: "✅ Student Registered Successfully",
+            message:
+                "✅ Student Registered Successfully",
 
-            studentId: newStudent.studentId
+            studentId:
+                newStudent.studentId
 
         });
 
-    } catch (err) {
+    }
+    catch (err) {
 
         console.log(err);
 
@@ -506,127 +543,150 @@ app.post("/api/register", async (req, res) => {
 
 // ================= STUDENT COUNT ====================
 
-app.get("/api/students/count", async (req, res) => {
+app.get(
+    "/api/students/count",
+    async (req, res) => {
 
-    try {
+        try {
 
-        const result = await cloudant.postFind({
+            const result =
+                await cloudant.postFind({
 
-            db: studentDB,
+                    db: studentDB,
 
-            selector: { }
+                    selector: {}
 
-        });
+                });
 
-        res.json({
+            res.json({
 
-            total: result.result.docs.length
+                total:
+                    result.result.docs.length
 
-        });
+            });
 
-    } catch (err) {
+        }
+        catch (err) {
 
-        console.log(err);
+            console.log(err);
 
-        res.status(500).send("Error");
+            res.status(500).send("Error");
+
+        }
 
     }
-
-});
+);
 
 
 // ================= GET ALL STUDENTS ====================
 
-app.get("/api/students", isAdmin, async (req, res) => {
+app.get(
+    "/api/students",
+    isAdmin,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const result = await cloudant.postFind({
+            const result =
+                await cloudant.postFind({
 
-            db: studentDB,
+                    db: studentDB,
 
-            selector: { }
+                    selector: {}
 
-        });
+                });
 
-        res.json(result.result.docs);
+            res.json(result.result.docs);
 
-    } catch (err) {
+        }
+        catch (err) {
 
-        console.log(err);
+            console.log(err);
 
-        res.status(500).send("Error");
+            res.status(500).send("Error");
+
+        }
 
     }
-
-});
+);
 
 
 // ================= ADD TEACHER ====================
 
-app.post('/add-teacher', async (req, res) => {
+app.post(
+    "/add-teacher",
+    isAdmin,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const teacherData = {
+            const teacherData = {
 
-            type: 'teacher',
+                type: "teacher",
 
-            name: req.body.name,
+                name: req.body.name,
 
-            subject: req.body.subject,
+                subject:
+                    req.body.subject,
 
-            mobile: req.body.mobile,
+                mobile:
+                    req.body.mobile,
 
-            email: req.body.email,
+                email:
+                    req.body.email,
 
-            qualification: req.body.qualification,
+                qualification:
+                    req.body.qualification,
 
-            createdAt: new Date()
+                createdAt:
+                    new Date()
 
-        };
+            };
 
-        await cloudant.postDocument({
+            await cloudant.postDocument({
 
-            db: teacherDB,
+                db: teacherDB,
 
-            document: teacherData
+                document: teacherData
 
-        });
+            });
 
-        res.json({
+            res.json({
 
-            success: true,
+                success: true,
 
-            message: 'Teacher Added Successfully'
+                message:
+                    "Teacher Added Successfully"
 
-        });
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json(err);
+
+        }
 
     }
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json(err);
-
-    }
-
-});
+);
 
 
 // ================= GET TEACHERS ====================
 
-app.get('/teachers', async (req, res) => {
+app.get("/teachers", async (req, res) => {
 
     try {
 
-        const data = await cloudant.postFind({
+        const data =
+            await cloudant.postFind({
 
-            db: teacherDB,
+                db: teacherDB,
 
-            selector: { }
+                selector: {}
 
-        });
+            });
 
         res.json(data.result.docs);
 
@@ -644,153 +704,177 @@ app.get('/teachers', async (req, res) => {
 
 // ================= TEACHER COUNT ====================
 
-app.get('/teacher-count', async (req, res) => {
+app.get(
+    "/teacher-count",
+    async (req, res) => {
 
-    try {
+        try {
 
-        const data = await cloudant.postFind({
+            const data =
+                await cloudant.postFind({
 
-            db: teacherDB,
+                    db: teacherDB,
 
-            selector: { }
+                    selector: {}
 
-        });
+                });
 
-        res.json({
+            res.json({
 
-            totalTeachers: data.result.docs.length
+                totalTeachers:
+                    data.result.docs.length
 
-        });
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json(err);
+
+        }
 
     }
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json(err);
-
-    }
-
-});
+);
 
 
 // ================= DELETE TEACHER ====================
 
-app.delete('/delete-teacher/:id', async (req, res) => {
+app.delete(
+    "/delete-teacher/:id",
+    isAdmin,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const id = req.params.id;
+            const id = req.params.id;
 
-        const doc = await cloudant.getDocument({
+            const doc =
+                await cloudant.getDocument({
 
-            db: teacherDB,
+                    db: teacherDB,
 
-            docId: id
+                    docId: id
 
-        });
+                });
 
-        await cloudant.deleteDocument({
+            await cloudant.deleteDocument({
 
-            db: teacherDB,
+                db: teacherDB,
 
-            docId: id,
+                docId: id,
 
-            rev: doc.result._rev
+                rev: doc.result._rev
 
-        });
+            });
 
-        res.json({
+            res.json({
 
-            success: true,
+                success: true,
 
-            message: 'Teacher Deleted'
+                message:
+                    "Teacher Deleted"
 
-        });
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json(err);
+
+        }
 
     }
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json(err);
-
-    }
-
-});
+);
 
 
 // ================= ADD FEE ====================
 
-app.post('/add-fee', async (req, res) => {
+app.post(
+    "/add-fee",
+    isAdmin,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const data = req.body;
+            const data = req.body;
 
-        const feeData = {
+            const feeData = {
 
-            type: 'fee',
+                type: "fee",
 
-            studentName: data.studentName,
+                studentName:
+                    data.studentName,
 
-            studentId: data.studentId,
+                studentId:
+                    data.studentId,
 
-            course: data.course,
+                course:
+                    data.course,
 
-            totalFee: Number(data.totalFee),
+                totalFee:
+                    Number(data.totalFee),
 
-            paidFee: Number(data.paidFee),
+                paidFee:
+                    Number(data.paidFee),
 
-            remainingFee:
-                Number(data.totalFee) -
-                Number(data.paidFee),
+                remainingFee:
+                    Number(data.totalFee)
+                    -
+                    Number(data.paidFee),
 
-            createdAt: new Date()
+                createdAt:
+                    new Date()
 
-        };
+            };
 
-        await cloudant.postDocument({
+            await cloudant.postDocument({
 
-            db: feeDB,
+                db: feeDB,
 
-            document: feeData
+                document: feeData
 
-        });
+            });
 
-        res.json({
+            res.json({
 
-            success: true,
+                success: true,
 
-            message: 'Fee Added Successfully'
+                message:
+                    "Fee Added Successfully"
 
-        });
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json(err);
+
+        }
 
     }
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json(err);
-
-    }
-
-});
+);
 
 
 // ================= GET FEES ====================
 
-app.get('/fees', async (req, res) => {
+app.get("/fees", async (req, res) => {
 
     try {
 
-        const data = await cloudant.postFind({
+        const data =
+            await cloudant.postFind({
 
-            db: feeDB,
+                db: feeDB,
 
-            selector: { }
+                selector: {}
 
-        });
+            });
 
         res.json(data.result.docs);
 
@@ -808,277 +892,246 @@ app.get('/fees', async (req, res) => {
 
 // ================= FEES TOTAL ====================
 
-app.get('/fees-total', async (req, res) => {
+app.get(
+    "/fees-total",
+    async (req, res) => {
+
+        try {
+
+            const data =
+                await cloudant.postFind({
+
+                    db: feeDB,
+
+                    selector: {}
+
+                });
+
+            let total = 0;
+
+            data.result.docs.forEach(
+                (fee) => {
+
+                    total +=
+                        Number(fee.paidFee);
+
+                }
+            );
+
+            res.json({ total });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json(err);
+
+        }
+
+    }
+);
+
+
+// ================= DELETE FEE ====================
+
+app.delete(
+    "/delete-fee/:id",
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const id = req.params.id;
+
+            const doc =
+                await cloudant.getDocument({
+
+                    db: feeDB,
+
+                    docId: id
+
+                });
+
+            await cloudant.deleteDocument({
+
+                db: feeDB,
+
+                docId: id,
+
+                rev: doc.result._rev
+
+            });
+
+            res.json({
+                success: true
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json(err);
+
+        }
+
+    }
+);
+
+
+// ================= UPDATE OLD IDS ====================
+
+app.get(
+    "/update-old-ids",
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const result =
+                await cloudant.postFind({
+
+                    db: studentDB,
+
+                    selector: {}
+
+                });
+
+            const students =
+                result.result.docs;
+
+            for (
+                let i = 0;
+                i < students.length;
+                i++
+            ) {
+
+                const student =
+                    students[i];
+
+                student.studentId =
+                    "GVU/" +
+                    String(i + 1)
+                    .padStart(3, '0');
+
+                await cloudant.putDocument({
+
+                    db: studentDB,
+
+                    docId: student._id,
+
+                    document: student
+
+                });
+
+            }
+
+            res.send(
+                "✅ Old IDs Updated"
+            );
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).send("Error");
+
+        }
+
+    }
+);
+
+
+// ================= STUDENT FEE STATUS ====================
+
+app.get(
+    "/student-fee-status/:studentId",
+    async (req, res) => {
+
+        try {
+
+            const studentId =
+                req.params.studentId;
+
+            const data =
+                await cloudant.postFind({
+
+                    db: feeDB,
+
+                    selector: {
+                        studentId: studentId
+                    }
+
+                });
+
+            if (
+                data.result.docs.length === 0
+            ) {
+
+                return res.json({
+                    status: "Pending"
+                });
+
+            }
+
+            const fee =
+                data.result.docs[0];
+
+            if (
+                Number(fee.remainingFee) <= 0
+            ) {
+
+                return res.json({
+                    status: "Paid"
+                });
+
+            }
+
+            return res.json({
+                status: "Partial"
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).send("Error");
+
+        }
+
+    }
+);
+
+
+// ================= STREAM TOTAL ====================
+
+app.get("/stream-total", (req, res) => {
+
+    res.json({
+        totalStreams: 15
+    });
+
+});
+
+
+// ================= STREAM COUNT ====================
+
+app.get("/stream-count", async (req, res) => {
 
     try {
 
-        const data = await cloudant.postFind({
+        const response = await cloudant.postFind({
 
-            db: feeDB,
+            db: studentDB,
 
             selector: {}
 
         });
 
-        let total = 0;
-
-        data.result.docs.forEach((fee) => {
-
-            total += Number(fee.paidFee);
-
-        });
-
-        res.json({ total });
-
-    }
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json(err);
-
-    }
-
-});
-
-
-// ================= DELETE FEE ====================
-
-app.delete('/delete-fee/:id', async (req, res) => {
-
-    try {
-
-        const id = req.params.id;
-
-        const doc = await cloudant.getDocument({
-
-            db: feeDB,
-
-            docId: id
-
-        });
-
-        await cloudant.deleteDocument({
-
-            db: feeDB,
-
-            docId: id,
-
-            rev: doc.result._rev
-
-        });
-
-        res.json({
-
-            success: true
-
-        });
-
-    }
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json(err);
-
-    }
-
-});
-
-
-// ================= UPDATE OLD STUDENT IDS ====================
-
-app.get('/update-old-ids', async (req, res) => {
-
-    try {
-
-        const result = await cloudant.postFind({
-
-            db: studentDB,
-
-            selector: { }
-
-        });
-
-        const students = result.result.docs;
-
-        for (let i = 0; i < students.length; i++) {
-
-            const student = students[i];
-
-            student.studentId =
-                "GVU/" + String(i + 1).padStart(3, '0');
-
-            await cloudant.putDocument({
-
-                db: studentDB,
-
-                docId: student._id,
-
-                document: student
-
-            });
-
-        }
-
-        res.send("✅ Old IDs Updated");
-
-    } catch (err) {
-
-        console.log(err);
-
-        res.status(500).send("Error");
-
-    }
-
-});
-
-
-// ================= ERROR PAGE ====================
-
-app.get("/error", (req, res) => {
-
-    res.send("Authentication Error");
-
-});
-
-
-// ================= APP ID CONFIG ====================
-
-function getAppIDConfig() {
-
-    let cfg;
-
-    try {
-
-        cfg = require('./localdev-config.json');
-
-    } catch (e) {
-
-        if (process.env.APPID_SERVICE_BINDING) {
-
-            cfg = JSON.parse(
-
-                process.env.APPID_SERVICE_BINDING
-
-            );
-
-            cfg.redirectUri = process.env.redirectUri;
-
-        } else {
-
-            let vcapApplication = JSON.parse(
-
-                process.env["VCAP_APPLICATION"]
-
-            );
-
-            return {
-
-                redirectUri:
-
-                    "https://" +
-
-                    vcapApplication["application_uris"][0] +
-
-                    CALLBACK_URL
-
-            };
-
-        }
-
-    }
-
-    return cfg;
-
-}
-
-
-
-
-// ================= STUDENT FEE STATUS ====================
-
-app.get('/student-fee-status/:studentId', async (req, res) => {
-
-    try {
-
-        const studentId = req.params.studentId;
-
-        const data = await cloudant.postFind({
-
-            db: feeDB,
-
-            selector: {
-                studentId: studentId
-            }
-
-        });
-
-        // No Fee Record
-
-        if(data.result.docs.length === 0){
-
-            return res.json({
-                status: "Pending"
-            });
-
-        }
-
-        const fee = data.result.docs[0];
-
-        // Fully Paid
-
-        if(Number(fee.remainingFee) <= 0){
-
-            return res.json({
-                status: "Paid"
-            });
-
-        }
-
-        // Partial Paid
-
-        return res.json({
-            status: "Partial"
-        });
-
-    }
-
-    catch(err){
-
-        console.log(err);
-
-        res.status(500).send("Error");
-
-    }
-
-});
-// ================= TOTAL STREAM ====================
-
-app.get('/stream-total', (req, res) => {
-
-    const totalStreams = 15;
-
-    res.json({
-
-        totalStreams: totalStreams
-
-    });
-
-});
-// ================= STREAM STUDENT COUNT ====================
-
-app.get('/stream-count', async (req, res) => {
-
-    try {
-
-        const result = await cloudant.postFind({
-
-            db: studentDB,
-
-            selector: { }
-
-        });
+        let students = response.result.docs;
 
         let counts = {
 
@@ -1100,13 +1153,21 @@ app.get('/stream-count', async (req, res) => {
 
         };
 
-        result.result.docs.forEach(student => {
+        students.forEach(student => {
 
-            let course = student.course;
+            let course =
+                student.course;
 
-            if(counts[course] !== undefined){
+            if(course){
 
-                counts[course]++;
+                course =
+                    course.toUpperCase();
+
+                if(counts[course] !== undefined){
+
+                    counts[course]++;
+
+                }
 
             }
 
@@ -1115,26 +1176,203 @@ app.get('/stream-count', async (req, res) => {
         res.json(counts);
 
     }
+
     catch(err){
 
         console.log(err);
 
-        res.status(500).send("Error");
+        res.status(500).json({
+            error: "Failed to fetch stream count"
+        });
 
     }
 
 });
 
+// ================= ERROR PAGE ====================
 
-// ================= APP ID LOGIN ====================
+app.get("/error", (req, res) => {
 
-app.get("/login",
+    res.send("Authentication Error");
 
-    passport.authenticate(
-        WebAppStrategy.STRATEGY_NAME
-    )
+});
 
+
+// ================= APP ID CONFIG ====================
+
+// function getAppIDConfig() {
+
+//     let cfg;
+
+//     try {
+
+//         cfg = require(
+//             './localdev-config.json'
+//         );
+
+//     }
+//     catch (e) {
+
+//         if (
+//             process.env.APPID_SERVICE_BINDING
+//         ) {
+
+//             cfg = JSON.parse(
+//                 process.env.APPID_SERVICE_BINDING
+//             );
+
+//             cfg.redirectUri =
+//                 process.env.redirectUri;
+
+//         }
+//         else {
+
+//             let vcapApplication =
+//                 JSON.parse(
+//                     process.env[
+//                         "VCAP_APPLICATION"
+//                     ]
+//                 );
+
+//             return {
+
+//                 redirectUri:
+//                     "https://" +
+//                     vcapApplication[
+//                         "application_uris"
+//                     ][0]
+//                     +
+//                     CALLBACK_URL
+
+//             };
+
+//         }
+
+//     }
+
+//     return cfg;
+
+// }
+
+
+function getAppIDConfig() {
+	let config;
+
+	try {
+		// if running locally we'll have the local config file
+		config = require('./localdev-config.json');
+	} catch (e) {
+		if (process.env.APPID_SERVICE_BINDING) { // if running on Kubernetes this env variable would be defined
+			config = JSON.parse(process.env.APPID_SERVICE_BINDING);
+			config.redirectUri = process.env.redirectUri;
+		} else { // running on CF
+			let vcapApplication = JSON.parse(process.env["VCAP_APPLICATION"]);
+			return { "redirectUri": "https://" + vcapApplication["application_uris"][0] + CALLBACK_URL };
+		}
+	}
+	return config;
+}
+
+// ================= DELETE STUDENT ====================
+// ================= DELETE STUDENT ====================
+
+app.delete(
+    "/delete-student/:id",
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const id = req.params.id;
+
+            // ================= GET STUDENT =================
+
+            const studentDoc =
+                await cloudant.getDocument({
+
+                    db: studentDB,
+
+                    docId: id
+
+                });
+
+            const student =
+                studentDoc.result;
+
+            const studentId =
+                student.studentId;
+
+            // ================= DELETE STUDENT =================
+
+            await cloudant.deleteDocument({
+
+                db: studentDB,
+
+                docId: id,
+
+                rev: student._rev
+
+            });
+
+            // ================= FIND FEES =================
+
+            const feeData =
+                await cloudant.postFind({
+
+                    db: feeDB,
+
+                    selector: {
+                        studentId: studentId
+                    }
+
+                });
+
+            // ================= DELETE ALL FEES =================
+
+            for(
+                let fee of feeData.result.docs
+            ){
+
+                await cloudant.deleteDocument({
+
+                    db: feeDB,
+
+                    docId: fee._id,
+
+                    rev: fee._rev
+
+                });
+
+            }
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Student And Fee Deleted"
+
+            });
+
+        }
+        catch (err) {
+
+            console.log(err);
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Delete Failed"
+
+            });
+
+        }
+
+    }
 );
+
 // ================= START SERVER ====================
 
 app.listen(port, () => {
@@ -1143,11 +1381,10 @@ app.listen(port, () => {
 
     console.log("✅ Server Running");
 
-    console.log("🌍 http://localhost:" + port);
+    console.log(
+        "🌍 http://localhost:" + port
+    );
 
     console.log("================================");
 
 });
-
-
-
