@@ -66,100 +66,185 @@ app.use(express.urlencoded({
 
 // ================= CLOUDANT ====================
 
-const cloudant = CloudantV1.newInstance({
+// const cloudant = CloudantV1.newInstance({
 
-    authenticator: new IamAuthenticator({
+//     authenticator: new IamAuthenticator({
 
-        apikey: config.CLOUDANT_APIKEY,
+//         apikey: config.CLOUDANT_APIKEY,
 
-    }),
+//     }),
 
-});
+// });
 
-cloudant.setServiceUrl(config.CLOUDANT_URL);
+// cloudant.setServiceUrl(config.CLOUDANT_URL);
 
-const studentDB = "students";
+// const studentDB = "students";
 
-const teacherDB = "teachers";
+// const teacherDB = "teachers";
 
-const feeDB = "fees";
+// const feeDB = "fees";
 
-const userDB = "users";
+// const userDB = "users";
 
+// ================= CLOUDANT ====================
 
-// ================= DATABASE CREATE ====================
-
-async function createDatabases() {
-
-    const databases = [
-        studentDB,
-        teacherDB,
-        feeDB,
-        userDB
-    ];
-
-    for (let db of databases) {
-
+// 1. Ek internal client variable banayein
+let cloudantInstance = null;
+function getCloudantClient() {
+    if (!cloudantInstance) {
         try {
-
-            await cloudant.putDatabase({
-                db: db
+            cloudantInstance = CloudantV1.newInstance({
+                authenticator: new IamAuthenticator({
+                    apikey: config.CLOUDANT_APIKEY || config.apikey,
+                }),
             });
-
-            console.log(`✅ ${db} Created`);
-
+            cloudantInstance.setServiceUrl(config.CLOUDANT_URL || config.serviceUrl);
+        } catch (err) {
+            console.error("⚠️ Cloudant initialization error:", err.message);
         }
-        catch (err) {
-
-            if (err.code === 412) {
-
-                console.log(`✅ ${db} Already Exists`);
-
-            }
-            else {
-
-                console.log(err);
-
-            }
-
-        }
-
     }
-
+    return cloudantInstance;
 }
 
-createDatabases();
+// 2. MAGIC LINE: Puraane 'cloudant' variable ko automatic Proxy bana dein!
+// Isse pure code me jahan bhi 'cloudant.something()' chalega, wo automatic sahi client utha lega.
+const cloudant = new Proxy({}, {
+    get: (target, prop) => {
+        const client = getCloudantClient();
+        return client ? client[prop] : undefined;
+    }
+});
+
+// Aapke puraane database names waise hi rahenge
+const studentDB = "students";
+const teacherDB = "teachers";
+const feeDB = "fees";
+const userDB = "users";
+// ================= DATABASE CREATE ====================
+
+// async function createDatabases() {
+
+//     const databases = [
+//         studentDB,
+//         teacherDB,
+//         feeDB,
+//         userDB
+//     ];
+
+//     for (let db of databases) {
+
+//         try {
+
+//             await cloudant.putDatabase({
+//                 db: db
+//             });
+
+//             console.log(`✅ ${db} Created`);
+
+//         }
+//         catch (err) {
+
+//             if (err.code === 412) {
+
+//                 console.log(`✅ ${db} Already Exists`);
+
+//             }
+//             else {
+
+//                 console.log(err);
+
+//             }
+
+//         }
+
+//     }
+
+// }
+
+// createDatabases();
 
 
 // ================= INDEX CREATE ====================
 
+// async function createIndex() {
+
+//     try {
+
+//         await cloudant.postIndex({
+
+//             db: studentDB,
+
+//             index: {
+//                 fields: ["aadhar"]
+//             },
+
+//             name: "student-index",
+
+//             type: "json"
+
+//         });
+
+//         console.log("✅ Index Created");
+
+//     }
+//     catch (err) {
+
+//         console.log(err);
+
+//     }
+
+// }
+
+// createIndex();
+// ================= DATABASE CREATE ====================
+
+async function createDatabases() {
+    const databases = [studentDB, teacherDB, feeDB, userDB];
+    const client = getCloudantClient();
+    
+    if (!client) {
+        console.error("❌ Cannot create databases: Cloudant client is not initialized.");
+        return;
+    }
+
+    for (let db of databases) {
+        try {
+            await client.putDatabase({ db: db });
+            console.log(`✅ ${db} Created`);
+        }
+        catch (err) {
+            if (err.code === 412) {
+                console.log(`✅ ${db} Already Exists`);
+            } else {
+                console.log(err);
+            }
+        }
+    }
+}
+
+createDatabases();
+
+// ================= INDEX CREATE ====================
+
 async function createIndex() {
+    const client = getCloudantClient();
+    if (!client) {
+        console.error("❌ Cannot create index: Cloudant client is not initialized.");
+        return;
+    }
 
     try {
-
-        await cloudant.postIndex({
-
+        await client.postIndex({
             db: studentDB,
-
-            index: {
-                fields: ["aadhar"]
-            },
-
+            index: { fields: ["aadhar"] },
             name: "student-index",
-
             type: "json"
-
         });
-
         console.log("✅ Index Created");
-
     }
     catch (err) {
-
         console.log(err);
-
     }
-
 }
 
 createIndex();
