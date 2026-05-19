@@ -4,7 +4,18 @@
 
 // ================= IMPORTS =====================
 
-const config = require('./localdev-config.json');
+// const config = require('./localdev-config.json')
+let config = {};
+try {
+    config = require('./localdev-config.json');
+} catch (e) {
+    console.log("Local config file not found, using Environment Variables.");
+    config = {
+        // Agar Render par file na mile, toh wo environment variables se data utha le
+        apikey: process.env.IBM_API_KEY, 
+        serviceUrl: process.env.IBM_SERVICE_URL
+    };
+}
 
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 
