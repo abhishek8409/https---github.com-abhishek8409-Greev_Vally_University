@@ -4,26 +4,7 @@
 
 // ================= IMPORTS =====================
 
-// const config = require('./localdev-config.json')
-// ================= IMPORTS =====================
-
-// ================= IMPORTS =====================
-
-// ================= IMPORTS =====================
-
-let config = {
-    // AppID credentials direct in production object
-    clientId: "476180be-aea4-4d77-8cee-7a923d51245c",
-    oauthServerUrl: "https://au-syd.appid.cloud.ibm.com/oauth/v4/178fa463-5e28-4a6e-a036-b1e5226b0fb9",
-    profilesUrl: "https://au-syd.appid.cloud.ibm.com",
-    secret: "YjgwMWI0MDAtNWViNy00YTE5LWI0ODItMTNzgxMGViMTVj",
-    tenantId: "178fa463-5e28-4a6e-a036-b1e5226b0fb9",
-    redirectUri: "https://university-backend-dx02.onrender.com/ibm/cloud/appid/callback", 
-
-    // Cloudant credentials (Ek single unbroken string me)
-    CLOUDANT_APIKEY: "DboYxbSOOVzOR9toVhQQCuWNbCaPnkgVb9k8rq6i1Lmg",
-    CLOUDANT_URL: "https://ac4d69ab-ab0c-41d7-aacf-2329e695e676-bluemix.cloudantnosqldb.appdomain.cloud"
-};
+const config = require('./localdev-config.json');
 
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 
@@ -62,185 +43,100 @@ app.use(express.urlencoded({
 
 // ================= CLOUDANT ====================
 
-// const cloudant = CloudantV1.newInstance({
+const cloudant = CloudantV1.newInstance({
 
-//     authenticator: new IamAuthenticator({
+    authenticator: new IamAuthenticator({
 
-//         apikey: config.CLOUDANT_APIKEY,
+        apikey: config.CLOUDANT_APIKEY,
 
-//     }),
+    }),
 
-// });
-
-// cloudant.setServiceUrl(config.CLOUDANT_URL);
-
-// const studentDB = "students";
-
-// const teacherDB = "teachers";
-
-// const feeDB = "fees";
-
-// const userDB = "users";
-
-// ================= CLOUDANT ====================
-
-// 1. Ek internal client variable banayein
-let cloudantInstance = null;
-function getCloudantClient() {
-    if (!cloudantInstance) {
-        try {
-            cloudantInstance = CloudantV1.newInstance({
-                authenticator: new IamAuthenticator({
-                    apikey: config.CLOUDANT_APIKEY || config.apikey,
-                }),
-            });
-            cloudantInstance.setServiceUrl(config.CLOUDANT_URL || config.serviceUrl);
-        } catch (err) {
-            console.error("⚠️ Cloudant initialization error:", err.message);
-        }
-    }
-    return cloudantInstance;
-}
-
-// 2. MAGIC LINE: Puraane 'cloudant' variable ko automatic Proxy bana dein!
-// Isse pure code me jahan bhi 'cloudant.something()' chalega, wo automatic sahi client utha lega.
-const cloudant = new Proxy({}, {
-    get: (target, prop) => {
-        const client = getCloudantClient();
-        return client ? client[prop] : undefined;
-    }
 });
 
-// Aapke puraane database names waise hi rahenge
+cloudant.setServiceUrl(config.CLOUDANT_URL);
+
 const studentDB = "students";
+
 const teacherDB = "teachers";
+
 const feeDB = "fees";
+
 const userDB = "users";
-// ================= DATABASE CREATE ====================
-
-// async function createDatabases() {
-
-//     const databases = [
-//         studentDB,
-//         teacherDB,
-//         feeDB,
-//         userDB
-//     ];
-
-//     for (let db of databases) {
-
-//         try {
-
-//             await cloudant.putDatabase({
-//                 db: db
-//             });
-
-//             console.log(`✅ ${db} Created`);
-
-//         }
-//         catch (err) {
-
-//             if (err.code === 412) {
-
-//                 console.log(`✅ ${db} Already Exists`);
-
-//             }
-//             else {
-
-//                 console.log(err);
-
-//             }
-
-//         }
-
-//     }
-
-// }
-
-// createDatabases();
 
 
-// ================= INDEX CREATE ====================
-
-// async function createIndex() {
-
-//     try {
-
-//         await cloudant.postIndex({
-
-//             db: studentDB,
-
-//             index: {
-//                 fields: ["aadhar"]
-//             },
-
-//             name: "student-index",
-
-//             type: "json"
-
-//         });
-
-//         console.log("✅ Index Created");
-
-//     }
-//     catch (err) {
-
-//         console.log(err);
-
-//     }
-
-// }
-
-// createIndex();
 // ================= DATABASE CREATE ====================
 
 async function createDatabases() {
-    const databases = [studentDB, teacherDB, feeDB, userDB];
-    const client = getCloudantClient();
-    
-    if (!client) {
-        console.error("❌ Cannot create databases: Cloudant client is not initialized.");
-        return;
-    }
+
+    const databases = [
+        studentDB,
+        teacherDB,
+        feeDB,
+        userDB
+    ];
 
     for (let db of databases) {
+
         try {
-            await client.putDatabase({ db: db });
+
+            await cloudant.putDatabase({
+                db: db
+            });
+
             console.log(`✅ ${db} Created`);
+
         }
         catch (err) {
+
             if (err.code === 412) {
+
                 console.log(`✅ ${db} Already Exists`);
-            } else {
-                console.log(err);
+
             }
+            else {
+
+                console.log(err);
+
+            }
+
         }
+
     }
+
 }
 
 createDatabases();
 
+
 // ================= INDEX CREATE ====================
 
 async function createIndex() {
-    const client = getCloudantClient();
-    if (!client) {
-        console.error("❌ Cannot create index: Cloudant client is not initialized.");
-        return;
-    }
 
     try {
-        await client.postIndex({
+
+        await cloudant.postIndex({
+
             db: studentDB,
-            index: { fields: ["aadhar"] },
+
+            index: {
+                fields: ["aadhar"]
+            },
+
             name: "student-index",
+
             type: "json"
+
         });
+
         console.log("✅ Index Created");
+
     }
     catch (err) {
+
         console.log(err);
+
     }
+
 }
 
 createIndex();
