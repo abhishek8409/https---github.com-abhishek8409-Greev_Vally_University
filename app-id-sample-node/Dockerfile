@@ -1,15 +1,15 @@
-FROM node:18-alpine
+FROM node:8.13-alpine
 
 WORKDIR /usr/src/app
 
 # Copy package.json first to check if an npm install is needed
-COPY package.json ./
+COPY package.json /usr/src/app
 RUN npm install --production
 
 # Bundle app source
-COPY ..
+COPY . /usr/src/app
 
 ENV PORT 80
-EXPOSE 80
+EXPOSE 80 80
 
-CMD ["node","app.js"]
+CMD ["npm", "start"]
