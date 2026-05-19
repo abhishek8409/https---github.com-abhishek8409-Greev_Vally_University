@@ -9,25 +9,21 @@
 
 // ================= IMPORTS =====================
 
-let config = {};
-try {
-    config = require('./localdev-config.json');
-} catch (e) {
-    console.log("⚠️ localdev-config.json missing. Using Production Hardcoded Config.");
-    config = {
-        // AppID credentials
-        clientId: "476180be-aea4-4d77-8cee-7a923d51245c",
-        oauthServerUrl: "https://au-syd.appid.cloud.ibm.com/oauth/v4/178fa463-5e28-4a6e-a036-b1e5226b0fb9",
-        profilesUrl: "https://au-syd.appid.cloud.ibm.com",
-        secret: "YjgwMWI0MDAtNWViNy00YTE5LWI0ODItMTNzgxMGViMTVj",
-        tenantId: "178fa463-5e28-4a6e-a036-b1e5226b0fb9",
-        redirectUri: "https://university-backend-dx02.onrender.com/ibm/cloud/appid/callback", 
+// ================= IMPORTS =====================
 
-        // Cloudant credentials
-        CLOUDANT_APIKEY: "DboYxbSOOVzOR9toVhQQCuWNbCaPnkgVb9k8rq6i1Lmg",
-        CLOUDANT_URL: "https://ac4d69ab-ab0c-41d7-aacf-2329e695e676-bluemix.cloudantnosqldb.appdomain.cloud"
-    };
-}
+let config = {
+    // AppID credentials direct in production object
+    clientId: "476180be-aea4-4d77-8cee-7a923d51245c",
+    oauthServerUrl: "https://au-syd.appid.cloud.ibm.com/oauth/v4/178fa463-5e28-4a6e-a036-b1e5226b0fb9",
+    profilesUrl: "https://au-syd.appid.cloud.ibm.com",
+    secret: "YjgwMWI0MDAtNWViNy00YTE5LWI0ODItMTNzgxMGViMTVj",
+    tenantId: "178fa463-5e28-4a6e-a036-b1e5226b0fb9",
+    redirectUri: "https://university-backend-dx02.onrender.com/ibm/cloud/appid/callback", 
+
+    // Cloudant credentials (Ek single unbroken string me)
+    CLOUDANT_APIKEY: "DboYxbSOOVzOR9toVhQQCuWNbCaPnkgVb9k8rq6i1Lmg",
+    CLOUDANT_URL: "https://ac4d69ab-ab0c-41d7-aacf-2329e695e676-bluemix.cloudantnosqldb.appdomain.cloud"
+};
 
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 
