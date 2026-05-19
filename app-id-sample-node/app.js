@@ -5,15 +5,17 @@
 // ================= IMPORTS =====================
 
 // const config = require('./localdev-config.json')
+// ================= IMPORTS =====================
+
 let config = {};
 try {
     config = require('./localdev-config.json');
 } catch (e) {
-    console.log("Local config file not found, using Environment Variables.");
+    console.log("⚠️ localdev-config.json missing. Using Render Environment Variables.");
     config = {
-        // Agar Render par file na mile, toh wo environment variables se data utha le
-        apikey: process.env.IBM_API_KEY, 
-        serviceUrl: process.env.IBM_SERVICE_URL
+        // Render ke environment variables ko sahi properties me map karein
+        CLOUDANT_APIKEY: process.env.IBM_API_KEY || "", 
+        CLOUDANT_URL: process.env.IBM_SERVICE_URL || ""
     };
 }
 
