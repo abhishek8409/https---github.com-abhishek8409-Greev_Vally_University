@@ -8,6 +8,7 @@ RUN npm install --production
 
 # Bundle app source
 COPY . /usr/src/app
+COPY localdev-config.json ./
 
 ENV PORT 80
 EXPOSE 80 80
